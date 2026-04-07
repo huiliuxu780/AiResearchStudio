@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -11,7 +11,8 @@ interface SectionCardProps {
 
 export function SectionCard({ title, description, actions, children }: SectionCardProps) {
   return (
-    <Card>
+    <Card className="relative overflow-hidden border-border/70 bg-card/70">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
       <CardHeader className="flex flex-row items-start justify-between gap-3">
         <div>
           <CardTitle>{title}</CardTitle>
@@ -23,4 +24,3 @@ export function SectionCard({ title, description, actions, children }: SectionCa
     </Card>
   );
 }
-

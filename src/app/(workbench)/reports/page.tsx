@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { PageShell } from "@/components/layout/page-shell";
+import { ContextBackBar } from "@/components/shared/context-back-bar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { ReportCard } from "@/components/shared/report-card";
@@ -39,6 +40,8 @@ export default function ReportsPage() {
         </>
       }
     >
+      <ContextBackBar href="/" label="\u8fd4\u56de\u4eea\u8868\u76d8" contextText={`\u5f53\u524d\u5468\u62a5\uff1a${selectedReport.id}`} />
+
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="space-y-3">
           {reportsMock.data.reports.map((report) => (
