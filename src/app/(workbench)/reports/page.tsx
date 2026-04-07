@@ -1,5 +1,6 @@
-"use client";
+﻿"use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { PageShell } from "@/components/layout/page-shell";
@@ -14,37 +15,42 @@ import { reportsMock } from "@/mock/reports.mock";
 export default function ReportsPage() {
   const searchParams = useSearchParams();
   const state = searchParams.get("state") ?? reportsMock.scenario;
+  const selectedId = searchParams.get("id") ?? reportsMock.data.selected_report_id;
 
   if (state === "loading") return <SkeletonBlock />;
-  if (state === "empty") return <EmptyState title="暂无周报" />;
-  if (state === "error") return <ErrorState title="周报加载失败" />;
+  if (state === "empty") return <EmptyState title="\u6682\u65e0\u5468\u62a5" />;
+  if (state === "error") return <ErrorState title="\u5468\u62a5\u52a0\u8f7d\u5931\u8d25" />;
 
-  const selectedReport = reportsMock.data.reports.find((item) => item.id === reportsMock.data.selected_report_id) ?? reportsMock.data.reports[0];
+  const selectedReport = reportsMock.data.reports.find((item) => item.id === selectedId) ?? reportsMock.data.reports[0];
 
   return (
     <PageShell
-      title="研究周报"
-      description="查看自动生成周报（Phase 1 为 mock）。"
+      title="\u7814\u7a76\u5468\u62a5"
+      description="\u67e5\u770b\u81ea\u52a8\u751f\u6210\u5468\u62a5\uff08Phase 1 \u4e3a mock\uff09\u3002"
       actions={
         <>
           <Button size="sm" variant="secondary">
-            Markdown 导出
+            Markdown \u5bfc\u51fa
           </Button>
           <Button size="sm" variant="outline">
-            复制飞书版本
+            \u590d\u5236\u98de\u4e66\u7248\u672c
           </Button>
-          <Button size="sm">人工编辑保存</Button>
+          <Button size="sm">\u4eba\u5de5\u7f16\u8f91\u4fdd\u5b58</Button>
         </>
       }
     >
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="space-y-3">
           {reportsMock.data.reports.map((report) => (
-            <ReportCard key={report.id} report={report} />
+            <Link key={report.id} href={`/reports?id=${report.id}`} className="block">
+              <div className={report.id === selectedReport.id ? "rounded-xl border border-primary/60" : "rounded-xl border border-transparent"}>
+                <ReportCard report={report} />
+              </div>
+            </Link>
           ))}
         </div>
 
-        <SectionCard title="周报详情" description="Markdown 内容预览">
+        <SectionCard title="\u5468\u62a5\u8be6\u60c5" description="Markdown \u5185\u5bb9\u9884\u89c8">
           <pre className="whitespace-pre-wrap rounded-md border border-border/60 bg-background/60 p-3 text-sm leading-6 text-foreground">
             {selectedReport.markdown_content}
           </pre>
@@ -53,5 +59,3 @@ export default function ReportsPage() {
     </PageShell>
   );
 }
-
-
