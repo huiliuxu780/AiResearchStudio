@@ -24,7 +24,7 @@ export default function DashboardPage() {
 
   return (
     <PageShell title="\u4eea\u8868\u76d8" description="\u5feb\u901f\u67e5\u770b\u7814\u7a76\u5168\u5c40\u72b6\u6001\u4e0e\u672c\u5468\u91cd\u70b9\u3002">
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {dashboardMock.data.metrics.map((metric) => (
           <StatCard key={metric.label} {...metric} />
         ))}
@@ -39,9 +39,9 @@ export default function DashboardPage() {
                 <Link
                   key={layer}
                   href={`/capability-map?layer=${layer}`}
-                  className="flex items-center justify-between rounded-md border border-border/50 px-3 py-2 text-sm transition-colors hover:border-primary/60 hover:bg-accent/40"
+                  className="group flex items-center justify-between rounded-md border border-border/50 px-3 py-2 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/40"
                 >
-                  <span>{capabilityLayerLabelMap[layer]}</span>
+                  <span className="transition-colors group-hover:text-foreground">{capabilityLayerLabelMap[layer]}</span>
                   <span className="font-medium text-primary">{item?.count ?? 0}</span>
                 </Link>
               );
@@ -55,9 +55,9 @@ export default function DashboardPage() {
               <Link
                 key={item.id}
                 href={`/timeline?item_id=${item.id}&topic=${item.topic_type}`}
-                className="block rounded-md border border-border/60 bg-background/50 p-3 transition-colors hover:border-primary/60 hover:bg-accent/30"
+                className="group block rounded-md border border-border/60 bg-background/50 p-3 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/30"
               >
-                <p className="text-sm font-medium">{item.title}</p>
+                <p className="text-sm font-medium transition-colors group-hover:text-foreground">{item.title}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{item.summary}</p>
               </Link>
             ))}
@@ -67,7 +67,7 @@ export default function DashboardPage() {
         <SectionCard title="\u6700\u65b0\u7814\u7a76\u7ed3\u8bba" description="\u6700\u8fd1\u66f4\u65b0\u7684\u7814\u7a76\u5224\u65ad\u3002">
           <div className="space-y-3">
             {dashboardMock.data.latest_insights.map((insight) => (
-              <Link key={insight.id} href={`/insights?id=${insight.id}`} className="block">
+              <Link key={insight.id} href={`/insights?id=${insight.id}`} className="block rounded-xl border border-transparent transition-all hover:-translate-y-0.5 hover:border-primary/60">
                 <InsightCard insight={insight} />
               </Link>
             ))}
