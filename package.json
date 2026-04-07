@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "next dev",
+    "dev": "next dev -p 4000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 4000",
     "lint": "eslint . --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
     "demo:check": "powershell -ExecutionPolicy Bypass -File ./scripts/phase1-demo-check.ps1",

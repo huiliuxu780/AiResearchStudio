@@ -1,5 +1,5 @@
 ﻿param(
-  [string]$BaseUrl = "http://localhost:3001"
+  [string]$BaseUrl = "http://localhost:4000"
 )
 
 $routes = @(
@@ -45,4 +45,5 @@ if ($failed.Count -gt 0) {
 
 Write-Output "`nAll demo routes responded successfully."
 exit 0
+
 

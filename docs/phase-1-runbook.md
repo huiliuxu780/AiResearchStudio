@@ -11,13 +11,13 @@ npm install
 
 ## Start Development Server (avoid port 3000)
 ```powershell
-npm run dev -- -p 3001
+npm run dev
 ```
-- URL: `http://localhost:3001`
+- URL: `http://localhost:4000`
 
 ## Stop Server (Windows)
 ```powershell
-netstat -ano | findstr ":3001 "
+netstat -ano | findstr ":4000 "
 taskkill /PID <PID> /F
 ```
 
@@ -52,3 +52,5 @@ Examples:
 - Frontend: `docs/roles/frontend-agent.md`
 - Test: `docs/roles/test-agent.md`
 - Workflow: `docs/roles/collaboration-flow.md`
+
+
