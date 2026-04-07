@@ -13,3 +13,5 @@ pnpm-debug.log*
 tsconfig.tsbuildinfo
 .codex
 .tmp_chatgpt_share.html
+.next-dev.out.log
+.next-dev.err.log
