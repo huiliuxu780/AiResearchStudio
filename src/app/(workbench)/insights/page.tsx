@@ -11,18 +11,22 @@ import { EvidenceList } from "@/components/shared/evidence-list";
 import { InsightCard } from "@/components/shared/insight-card";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { SectionCard } from "@/components/shared/section-card";
-import { insightsMock } from "@/mock/insights.mock";
+import { mockWorkbenchRepository } from "@/repositories";
 
 export default function InsightsPage() {
   const searchParams = useSearchParams();
-  const state = searchParams.get("state") ?? insightsMock.scenario;
-  const selectedId = searchParams.get("id") ?? insightsMock.data.insights[0]?.id;
+  const insights = mockWorkbenchRepository.getInsights({
+    state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined,
+    id: searchParams.get("id") ?? undefined
+  });
+  const state = insights.scenario;
+  const selectedId = searchParams.get("id") ?? insights.data.insights[0]?.id;
 
   if (state === "loading") return <SkeletonBlock />;
   if (state === "empty") return <EmptyState title="\u6682\u65e0\u7814\u7a76\u7ed3\u8bba" />;
   if (state === "error") return <ErrorState title="\u7814\u7a76\u7ed3\u8bba\u52a0\u8f7d\u5931\u8d25" />;
 
-  const selectedInsight = insightsMock.data.insights.find((item) => item.id === selectedId) ?? insightsMock.data.insights[0];
+  const selectedInsight = insights.data.insights.find((item) => item.id === selectedId) ?? insights.data.insights[0];
 
   return (
     <PageShell title="\u7814\u7a76\u7ed3\u8bba" description="\u67e5\u770b\u7ed3\u8bba\u3001\u72b6\u6001\u4e0e\u8bc1\u636e\u94fe\u3002">
@@ -30,7 +34,7 @@ export default function InsightsPage() {
 
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="space-y-3">
-          {insightsMock.data.insights.map((insight) => (
+          {insights.data.insights.map((insight) => (
             <Link key={insight.id} href={`/insights?id=${insight.id}`} className="block">
               <div className={insight.id === selectedInsight.id ? "rounded-xl border border-primary/60" : "rounded-xl border border-transparent"}>
                 <InsightCard insight={insight} />
@@ -43,7 +47,7 @@ export default function InsightsPage() {
           <div className="space-y-3">
             <p className="text-sm font-medium">{selectedInsight.title}</p>
             <p className="text-sm text-muted-foreground">{selectedInsight.content}</p>
-            <EvidenceList items={insightsMock.data.evidence_items[selectedInsight.id] ?? []} />
+            <EvidenceList items={insights.data.evidence_items[selectedInsight.id] ?? []} />
           </div>
         </SectionCard>
       </div>

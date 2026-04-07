@@ -12,11 +12,14 @@ import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { StatCard } from "@/components/shared/stat-card";
 import { capabilityLayerDisplayOrder } from "@/lib/constants";
 import { capabilityLayerLabelMap } from "@/lib/label-maps";
-import { dashboardMock } from "@/mock/dashboard.mock";
+import { mockWorkbenchRepository } from "@/repositories";
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
-  const state = searchParams.get("state") ?? dashboardMock.scenario;
+  const dashboard = mockWorkbenchRepository.getDashboard({
+    state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined
+  });
+  const state = dashboard.scenario;
 
   if (state === "loading") return <SkeletonBlock />;
   if (state === "empty") return <EmptyState title="\u4eea\u8868\u76d8\u6682\u65e0\u6570\u636e" />;
@@ -25,7 +28,7 @@ export default function DashboardPage() {
   return (
     <PageShell title="\u4eea\u8868\u76d8" description="\u5feb\u901f\u67e5\u770b\u7814\u7a76\u5168\u5c40\u72b6\u6001\u4e0e\u672c\u5468\u91cd\u70b9\u3002">
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {dashboardMock.data.metrics.map((metric) => (
+        {dashboard.data.metrics.map((metric) => (
           <StatCard key={metric.label} {...metric} />
         ))}
       </section>
@@ -34,7 +37,7 @@ export default function DashboardPage() {
         <SectionCard title="\u516d\u5c42\u5206\u5e03\u6982\u89c8" description="\u6309\u80fd\u529b\u5206\u5c42\u89c2\u5bdf\u672c\u5468\u4fe1\u606f\u5bc6\u5ea6\u3002">
           <div className="space-y-2">
             {capabilityLayerDisplayOrder.map((layer) => {
-              const item = dashboardMock.data.layer_distribution.find((entry) => entry.capability_layer === layer);
+              const item = dashboard.data.layer_distribution.find((entry) => entry.capability_layer === layer);
               return (
                 <Link
                   key={layer}
@@ -51,7 +54,7 @@ export default function DashboardPage() {
 
         <SectionCard title="\u8fd1\u671f\u91cd\u70b9\u52a8\u6001" description="\u9ad8\u4ef7\u503c\u4e8b\u5b9e\u5361\u7247\u3002">
           <div className="space-y-3">
-            {dashboardMock.data.recent_highlights.map((item) => (
+            {dashboard.data.recent_highlights.map((item) => (
               <Link
                 key={item.id}
                 href={`/timeline?item_id=${item.id}&topic=${item.topic_type}`}
@@ -66,7 +69,7 @@ export default function DashboardPage() {
 
         <SectionCard title="\u6700\u65b0\u7814\u7a76\u7ed3\u8bba" description="\u6700\u8fd1\u66f4\u65b0\u7684\u7814\u7a76\u5224\u65ad\u3002">
           <div className="space-y-3">
-            {dashboardMock.data.latest_insights.map((insight) => (
+            {dashboard.data.latest_insights.map((insight) => (
               <Link key={insight.id} href={`/insights?id=${insight.id}`} className="block rounded-xl border border-transparent transition-all hover:-translate-y-0.5 hover:border-primary/60">
                 <InsightCard insight={insight} />
               </Link>
@@ -77,7 +80,7 @@ export default function DashboardPage() {
 
       <SectionCard title="\u672c\u5468\u5efa\u8bae\u5b9e\u9a8c" description="\u7528\u4e8e\u63a8\u8fdb PoC \u4e0e\u9009\u578b\u9a8c\u8bc1\u3002">
         <ul className="space-y-2 text-sm">
-          {dashboardMock.data.experiment_suggestions.map((item) => (
+          {dashboard.data.experiment_suggestions.map((item) => (
             <li key={item} className="rounded-md border border-border/50 px-3 py-2">
               {item}
             </li>

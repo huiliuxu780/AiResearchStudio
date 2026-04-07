@@ -11,23 +11,28 @@ import { FilterBar } from "@/components/shared/filter-bar";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { TimelineItemCard } from "@/components/shared/timeline-item-card";
 import { topicTypeLabelMap } from "@/lib/label-maps";
-import { timelineMock } from "@/mock/timeline.mock";
+import { mockWorkbenchRepository } from "@/repositories";
 
 export default function TimelinePage() {
   const searchParams = useSearchParams();
-  const state = searchParams.get("state") ?? timelineMock.scenario;
   const topic = searchParams.get("topic");
   const itemId = searchParams.get("item_id");
+  const timeline = mockWorkbenchRepository.getTimeline({
+    state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined,
+    topic: topic ?? undefined,
+    item_id: itemId ?? undefined
+  });
+  const state = timeline.scenario;
 
   const filteredItems = useMemo(() => {
-    const byTopic = topic ? timelineMock.data.items.filter((item) => item.topic_type === topic) : timelineMock.data.items;
+    const byTopic = topic ? timeline.data.items.filter((item) => item.topic_type === topic) : timeline.data.items;
     if (!itemId) return byTopic;
 
     const selected = byTopic.find((item) => item.id === itemId);
     if (!selected) return byTopic;
 
     return [selected, ...byTopic.filter((item) => item.id !== itemId)];
-  }, [topic, itemId]);
+  }, [timeline.data.items, topic, itemId]);
 
   if (state === "loading") return <SkeletonBlock />;
   if (state === "empty") return <EmptyState title="\u52a8\u6001\u65f6\u95f4\u7ebf\u6682\u65e0\u5185\u5bb9" />;
@@ -43,7 +48,7 @@ export default function TimelinePage() {
         contextText={topicLabel ? `\u4e0a\u4e0b\u6587\uff1a${topicLabel}` : "\u4e0a\u4e0b\u6587\uff1a\u5168\u90e8\u4e3b\u9898"}
       />
 
-      <FilterBar sourceTypes={timelineMock.data.filters.source_types} topicTypes={timelineMock.data.filters.topic_types} />
+      <FilterBar sourceTypes={timeline.data.filters.source_types} topicTypes={timeline.data.filters.topic_types} />
 
       <div className="space-y-3">
         {filteredItems.length === 0 ? (

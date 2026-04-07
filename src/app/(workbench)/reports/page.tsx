@@ -11,18 +11,22 @@ import { ReportCard } from "@/components/shared/report-card";
 import { SectionCard } from "@/components/shared/section-card";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { Button } from "@/components/ui/button";
-import { reportsMock } from "@/mock/reports.mock";
+import { mockWorkbenchRepository } from "@/repositories";
 
 export default function ReportsPage() {
   const searchParams = useSearchParams();
-  const state = searchParams.get("state") ?? reportsMock.scenario;
-  const selectedId = searchParams.get("id") ?? reportsMock.data.selected_report_id;
+  const reports = mockWorkbenchRepository.getReports({
+    state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined,
+    id: searchParams.get("id") ?? undefined
+  });
+  const state = reports.scenario;
+  const selectedId = searchParams.get("id") ?? reports.data.selected_report_id;
 
   if (state === "loading") return <SkeletonBlock />;
   if (state === "empty") return <EmptyState title="\u6682\u65e0\u5468\u62a5" />;
   if (state === "error") return <ErrorState title="\u5468\u62a5\u52a0\u8f7d\u5931\u8d25" />;
 
-  const selectedReport = reportsMock.data.reports.find((item) => item.id === selectedId) ?? reportsMock.data.reports[0];
+  const selectedReport = reports.data.reports.find((item) => item.id === selectedId) ?? reports.data.reports[0];
 
   return (
     <PageShell
@@ -44,7 +48,7 @@ export default function ReportsPage() {
 
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="space-y-3">
-          {reportsMock.data.reports.map((report) => (
+          {reports.data.reports.map((report) => (
             <Link key={report.id} href={`/reports?id=${report.id}`} className="block">
               <div className={report.id === selectedReport.id ? "rounded-xl border border-primary/60" : "rounded-xl border border-transparent"}>
                 <ReportCard report={report} />
