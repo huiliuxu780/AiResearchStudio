@@ -1,1 +1,1 @@
-﻿export { mockWorkbenchRepository } from "@/repositories/workbench";
+﻿export { getWorkbenchRepository } from "@/repositories/workbench";

@@ -11,9 +11,7 @@ npm install
 
 ## Start Development Server
 ```powershell
-npm run dev
-```
-Default URL: `http://localhost:3000`
+npm run dev -- -p 3001`n``` `nDefault URL: `http://localhost:3001`
 
 ## Stop Server (Windows)
 ```powershell
@@ -46,11 +44,9 @@ Examples:
 - `/reports?state=error`
 
 ## Troubleshooting
-- If port 3000 is occupied, run:
-```powershell
-npm run dev -- -p 3001
-```
+- Default dev port is set to 3001 to avoid conflicts with other local projects.
 - If type check fails, ensure no local file encoding corruption and rerun:
 ```powershell
 npm run type-check
 ```
+

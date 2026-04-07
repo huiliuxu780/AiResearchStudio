@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -11,11 +11,12 @@ import { EvidenceList } from "@/components/shared/evidence-list";
 import { InsightCard } from "@/components/shared/insight-card";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { SectionCard } from "@/components/shared/section-card";
-import { mockWorkbenchRepository } from "@/repositories";
+import { getWorkbenchRepository } from "@/repositories";
 
 export default function InsightsPage() {
   const searchParams = useSearchParams();
-  const insights = mockWorkbenchRepository.getInsights({
+  const repository = getWorkbenchRepository();
+  const insights = repository.getInsights({
     state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined,
     id: searchParams.get("id") ?? undefined
   });
@@ -54,3 +55,4 @@ export default function InsightsPage() {
     </PageShell>
   );
 }
+

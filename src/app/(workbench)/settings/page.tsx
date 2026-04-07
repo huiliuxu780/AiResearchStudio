@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useSearchParams } from "next/navigation";
 
@@ -8,11 +8,12 @@ import { ErrorState } from "@/components/shared/error-state";
 import { SectionCard } from "@/components/shared/section-card";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { sourceTypeLabelMap } from "@/lib/label-maps";
-import { mockWorkbenchRepository } from "@/repositories";
+import { getWorkbenchRepository } from "@/repositories";
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
-  const settings = mockWorkbenchRepository.getSettings({
+  const repository = getWorkbenchRepository();
+  const settings = repository.getSettings({
     state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined
   });
   const state = settings.scenario;
@@ -63,3 +64,4 @@ export default function SettingsPage() {
     </PageShell>
   );
 }
+

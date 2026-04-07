@@ -1,4 +1,6 @@
-﻿export { mockWorkbenchRepository } from "@/repositories/workbench/mock-repository";
+﻿export { getWorkbenchRepository } from "@/repositories/workbench/factory";
+export { httpWorkbenchRepository } from "@/repositories/workbench/http-repository";
+export { mockWorkbenchRepository } from "@/repositories/workbench/mock-repository";
 export type { WorkbenchRepository } from "@/repositories/workbench/repository";
 export type {
   CapabilityMapState,

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -11,13 +11,14 @@ import { FilterBar } from "@/components/shared/filter-bar";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { TimelineItemCard } from "@/components/shared/timeline-item-card";
 import { topicTypeLabelMap } from "@/lib/label-maps";
-import { mockWorkbenchRepository } from "@/repositories";
+import { getWorkbenchRepository } from "@/repositories";
 
 export default function TimelinePage() {
   const searchParams = useSearchParams();
   const topic = searchParams.get("topic");
   const itemId = searchParams.get("item_id");
-  const timeline = mockWorkbenchRepository.getTimeline({
+  const repository = getWorkbenchRepository();
+  const timeline = repository.getTimeline({
     state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined,
     topic: topic ?? undefined,
     item_id: itemId ?? undefined
@@ -60,3 +61,4 @@ export default function TimelinePage() {
     </PageShell>
   );
 }
+

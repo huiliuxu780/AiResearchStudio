@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useSearchParams } from "next/navigation";
 
@@ -8,11 +8,12 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { capabilityLayerDisplayOrder } from "@/lib/constants";
-import { mockWorkbenchRepository } from "@/repositories";
+import { getWorkbenchRepository } from "@/repositories";
 
 export default function CapabilityMapPage() {
   const searchParams = useSearchParams();
-  const capabilityMap = mockWorkbenchRepository.getCapabilityMap({
+  const repository = getWorkbenchRepository();
+  const capabilityMap = repository.getCapabilityMap({
     state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined
   });
   const state = capabilityMap.scenario;
@@ -35,3 +36,4 @@ export default function CapabilityMapPage() {
     </PageShell>
   );
 }
+

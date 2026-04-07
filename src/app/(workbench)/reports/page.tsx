@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -11,11 +11,12 @@ import { ReportCard } from "@/components/shared/report-card";
 import { SectionCard } from "@/components/shared/section-card";
 import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { Button } from "@/components/ui/button";
-import { mockWorkbenchRepository } from "@/repositories";
+import { getWorkbenchRepository } from "@/repositories";
 
 export default function ReportsPage() {
   const searchParams = useSearchParams();
-  const reports = mockWorkbenchRepository.getReports({
+  const repository = getWorkbenchRepository();
+  const reports = repository.getReports({
     state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined,
     id: searchParams.get("id") ?? undefined
   });
@@ -66,3 +67,4 @@ export default function ReportsPage() {
     </PageShell>
   );
 }
+

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -12,11 +12,12 @@ import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { StatCard } from "@/components/shared/stat-card";
 import { capabilityLayerDisplayOrder } from "@/lib/constants";
 import { capabilityLayerLabelMap } from "@/lib/label-maps";
-import { mockWorkbenchRepository } from "@/repositories";
+import { getWorkbenchRepository } from "@/repositories";
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
-  const dashboard = mockWorkbenchRepository.getDashboard({
+  const repository = getWorkbenchRepository();
+  const dashboard = repository.getDashboard({
     state: (searchParams.get("state") as "ready" | "loading" | "empty" | "error" | null) ?? undefined
   });
   const state = dashboard.scenario;
@@ -94,3 +95,4 @@ export default function DashboardPage() {
     </PageShell>
   );
 }
+
