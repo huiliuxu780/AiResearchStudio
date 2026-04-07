@@ -9,19 +9,23 @@
 npm install
 ```
 
-## Start Development Server
+## Start Development Server (avoid port 3000)
 ```powershell
-npm run dev -- -p 3001`n``` `nDefault URL: `http://localhost:3001`
+npm run dev -- -p 3001
+```
+- URL: `http://localhost:3001`
 
 ## Stop Server (Windows)
 ```powershell
-netstat -ano | findstr ":3000 "
+netstat -ano | findstr ":3001 "
 taskkill /PID <PID> /F
 ```
 
-## Useful Commands
+## Quality Checks
 ```powershell
 npm run type-check
+npm run lint
+npm run build
 npm run demo:check
 ```
 
@@ -43,10 +47,8 @@ Examples:
 - `/insights?state=empty`
 - `/reports?state=error`
 
-## Troubleshooting
-- Default dev port is set to 3001 to avoid conflicts with other local projects.
-- If type check fails, ensure no local file encoding corruption and rerun:
-```powershell
-npm run type-check
-```
-
+## Role Collaboration References
+- PM: `docs/roles/pm-agent.md`
+- Frontend: `docs/roles/frontend-agent.md`
+- Test: `docs/roles/test-agent.md`
+- Workflow: `docs/roles/collaboration-flow.md`
