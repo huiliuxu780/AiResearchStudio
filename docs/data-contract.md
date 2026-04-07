@@ -1,20 +1,13 @@
-# Data Contract（Phase 1）
+﻿# Data Contract（Phase 1）
 
-## 1. 适用范围
-- 本文定义 Phase 1 的前后端数据契约与枚举口径。
-- API 字段统一使用 `snake_case`。
-- 前端用户可见文案统一通过中文 `label_map` 映射，不直接显示枚举值。
+## 适用范围
+- 本文定义 Phase 1 的数据契约与枚举口径
+- API JSON 字段统一使用 `snake_case`
+- 前端展示统一通过中文 `label_map` 映射，不直接显示枚举值
 
-## 2. 设计原则
-- 枚举值保持稳定业务语义，不包含展示顺序语义。
-- `source_type` 与 `item_type` 严格分离：
-  - `source_type` 描述来源渠道
-  - `item_type` 描述内容性质
-- 展示顺序由常量数组控制，不写入枚举值。
+## 核心枚举
 
-## 3. 核心枚举
-
-### 3.1 capability_layer
+### capability_layer
 ```json
 [
   "infrastructure",
@@ -26,18 +19,7 @@
 ]
 ```
 
-### 3.2 source_type
-```json
-[
-  "docs",
-  "blog",
-  "github",
-  "media",
-  "manual"
-]
-```
-
-### 3.3 topic_type
+### topic_type
 ```json
 [
   "text_model",
@@ -58,7 +40,18 @@
 ]
 ```
 
-### 3.4 item_type
+### source_type
+```json
+[
+  "docs",
+  "blog",
+  "github",
+  "media",
+  "manual"
+]
+```
+
+### item_type
 ```json
 [
   "release",
@@ -72,35 +65,22 @@
 ]
 ```
 
-### 3.5 importance_level
+### importance_level
 ```json
-[
-  "high",
-  "medium",
-  "low"
-]
+["high", "medium", "low"]
 ```
 
-### 3.6 insight_type
+### insight_type
 ```json
-[
-  "trend_judgment",
-  "opportunity",
-  "risk_alert",
-  "action_suggestion"
-]
+["trend_judgment", "opportunity", "risk_alert", "action_suggestion"]
 ```
 
-### 3.7 insight_status
+### insight_status
 ```json
-[
-  "candidate",
-  "confirmed",
-  "archived"
-]
+["candidate", "confirmed", "archived"]
 ```
 
-## 4. 展示顺序常量（前端控制）
+## 展示顺序常量（前端控制）
 ```json
 {
   "capability_layer_display_order": [
@@ -116,9 +96,9 @@
 }
 ```
 
-## 5. 数据对象契约
+## 数据对象契约
 
-### 5.1 Source
+### Source
 ```json
 {
   "id": "src_001",
@@ -132,17 +112,7 @@
 }
 ```
 
-字段说明：
-- `id`: 信息源 ID
-- `name`: 来源名称（中文展示）
-- `source_type`: 来源渠道枚举
-- `url`: 来源地址
-- `enabled`: 是否启用
-- `crawl_strategy`: 抓取策略（Phase 1 mock）
-- `last_crawled_at`: 上次抓取时间
-- `status`: 状态（`active` / `paused` / `error`）
-
-### 5.2 Raw Item
+### Raw Item
 ```json
 {
   "id": "raw_001",
@@ -157,7 +127,7 @@
 }
 ```
 
-### 5.3 Normalized Item
+### Normalized Item
 ```json
 {
   "id": "norm_001",
@@ -176,12 +146,12 @@
 }
 ```
 
-### 5.4 Insight
+### Insight
 ```json
 {
   "id": "ins_001",
-  "title": "平台层 API 能力趋向标准化输出",
-  "content": "结构化输出将提升接入一致性，建议优先验证字段约束与错误处理。",
+  "title": "平台层 API 能力趋于标准化输出",
+  "content": "建议优先验证字段约束与错误处理。",
   "insight_type": "trend_judgment",
   "capability_layer": "platform",
   "confidence_score": 0.82,
@@ -192,21 +162,21 @@
 }
 ```
 
-### 5.5 Weekly Report
+### Weekly Report
 ```json
 {
   "id": "rep_2026w14",
   "week_start_date": "2026-03-30",
   "week_end_date": "2026-04-05",
-  "title": "第 14 周阿里 AI 研究周报",
+  "title": "第14周 AI 研究周报",
   "markdown_content": "# 本周摘要...",
   "highlights": ["平台层更新活跃", "Agent 编排案例增加"],
-  "experiment_suggestions": ["验证结构化输出与工作流节点兼容性"],
+  "experiment_suggestions": ["验证结构化输出在工作流节点的兼容性"],
   "updated_at": "2026-04-06T18:30:00Z"
 }
 ```
 
-### 5.6 Capability Catalog
+### Capability Catalog
 ```json
 {
   "id": "cap_001",
@@ -221,38 +191,7 @@
 }
 ```
 
-## 6. 前端中文 label map 约定
-
-```json
-{
-  "capability_layer": {
-    "infrastructure": "基础资源层",
-    "model": "模型层",
-    "enhancement": "模型增强层",
-    "orchestration": "编排执行层",
-    "platform": "平台工具层",
-    "product": "产品与场景层"
-  },
-  "source_type": {
-    "docs": "官方文档",
-    "blog": "官方博客",
-    "github": "GitHub",
-    "media": "媒体/发布",
-    "manual": "手动录入"
-  },
-  "importance_level": {
-    "high": "高",
-    "medium": "中",
-    "low": "低"
-  },
-  "insight_status": {
-    "candidate": "候选",
-    "confirmed": "已确认",
-    "archived": "已归档"
-  }
-}
-```
-
-说明：
-- label map 由前端维护在 `src/lib/label-maps.ts`。
-- 所有页面展示字段（筛选项、标签、状态）必须经 label map 转中文。
+## 前端中文 label_map 约定
+- 文件位置：`src/lib/label-maps.ts`
+- 必须映射：`capability_layer`、`topic_type`、`source_type`、`item_type`、`importance_level`、`insight_type`、`insight_status`
+- 所有页面展示文本必须走映射
