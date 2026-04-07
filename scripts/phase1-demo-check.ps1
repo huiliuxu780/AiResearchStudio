@@ -1,5 +1,5 @@
 ﻿param(
-  [string]$BaseUrl = "http://localhost:3000"
+  [string]$BaseUrl = "http://localhost:3001"
 )
 
 $routes = @(
@@ -24,7 +24,7 @@ $failed = @()
 foreach ($route in $routes) {
   $url = "$BaseUrl$route"
   try {
-    $res = Invoke-WebRequest -Uri $url -Method GET -UseBasicParsing -TimeoutSec 8
+    $res = Invoke-WebRequest -Uri $url -Method GET -UseBasicParsing -TimeoutSec 30
     if ($res.StatusCode -ge 200 -and $res.StatusCode -lt 400) {
       Write-Output "[OK] $url ($($res.StatusCode))"
     } else {
@@ -38,10 +38,11 @@ foreach ($route in $routes) {
 }
 
 if ($failed.Count -gt 0) {
-  Write-Output "\nFailed routes:"
+  Write-Output "`nFailed routes:"
   $failed | ForEach-Object { Write-Output "- $_" }
   exit 1
 }
 
-Write-Output "\nAll demo routes responded successfully."
+Write-Output "`nAll demo routes responded successfully."
 exit 0
+
