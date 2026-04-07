@@ -1,47 +1,49 @@
 {
-    "name": "airesearchstudio",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "directories": {
-        "doc": "docs"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "eslint . --ext .ts,.tsx",
-        "type-check": "tsc --noEmit",
-        "demo:check": "powershell -ExecutionPolicy Bypass -File ./scripts/phase1-demo-check.ps1"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@radix-ui/react-select": "^2.2.6",
-        "@radix-ui/react-separator": "^1.1.8",
-        "@radix-ui/react-slot": "^1.2.4",
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
-        "cssesc": "^3.0.0",
-        "lucide-react": "^1.7.0",
-        "next": "^16.2.2",
-        "react": "^19.2.4",
-        "react-dom": "^19.2.4",
-        "tailwind-merge": "^3.5.0"
-    },
-    "devDependencies": {
-        "@types/node": "^25.5.2",
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
-        "autoprefixer": "^10.4.27",
-        "eslint": "^9.39.4",
-        "eslint-config-next": "^16.2.2",
-        "eslint-plugin-react": "^7.37.5",
-        "postcss": "^8.5.8",
-        "tailwindcss": "^3.4.17",
-        "typescript": "^6.0.2"
-    },
-    "private": true
+  "name": "airesearchstudio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext .ts,.tsx",
+    "type-check": "tsc --noEmit",
+    "demo:check": "powershell -ExecutionPolicy Bypass -File ./scripts/phase1-demo-check.ps1",
+    "check:encoding": "powershell -ExecutionPolicy Bypass -File ./scripts/check-encoding.ps1",
+    "preflight": "npm run type-check && npm run lint && npm run build && npm run check:encoding"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cssesc": "^3.0.0",
+    "lucide-react": "^1.7.0",
+    "next": "^16.2.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.2",
+    "eslint-plugin-react": "^7.37.5",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^6.0.2"
+  },
+  "private": true
 }
