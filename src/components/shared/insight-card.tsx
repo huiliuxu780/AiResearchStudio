@@ -1,9 +1,9 @@
-import { capabilityLayerLabelMap, insightTypeLabelMap } from "@/lib/label-maps";
+﻿import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateTime } from "@/lib/formatters";
+import { capabilityLayerLabelMap, insightTypeLabelMap } from "@/lib/label-maps";
 import type { Insight } from "@/types/contracts";
 
 import { StatusBadge } from "@/components/shared/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface InsightCardProps {
   insight: Insight;
@@ -31,4 +31,3 @@ export function InsightCard({ insight }: InsightCardProps) {
     </Card>
   );
 }
-

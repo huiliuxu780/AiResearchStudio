@@ -1,6 +1,6 @@
+﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { capabilityLayerLabelMap } from "@/lib/label-maps";
 import type { CapabilityLayerSummary } from "@/mock/capability.mock";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface CapabilityLayerCardProps {
   layer: CapabilityLayerSummary;
@@ -31,4 +31,3 @@ export function CapabilityLayerCard({ layer }: CapabilityLayerCardProps) {
     </Card>
   );
 }
-

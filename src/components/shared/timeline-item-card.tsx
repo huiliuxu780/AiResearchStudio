@@ -1,9 +1,9 @@
-import { itemTypeLabelMap, sourceTypeLabelMap, topicTypeLabelMap } from "@/lib/label-maps";
+﻿import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateTime } from "@/lib/formatters";
+import { itemTypeLabelMap, sourceTypeLabelMap, topicTypeLabelMap } from "@/lib/label-maps";
 import type { NormalizedItem } from "@/types/contracts";
 
 import { StatusBadge } from "@/components/shared/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface TimelineItemCardProps {
   item: NormalizedItem;
@@ -31,4 +31,3 @@ export function TimelineItemCard({ item }: TimelineItemCardProps) {
     </Card>
   );
 }
-

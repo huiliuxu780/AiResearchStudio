@@ -1,6 +1,5 @@
-"use client";
+﻿"use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { PageShell } from "@/components/layout/page-shell";
@@ -9,8 +8,9 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { EvidenceList } from "@/components/shared/evidence-list";
 import { InsightCard } from "@/components/shared/insight-card";
-import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { SectionCard } from "@/components/shared/section-card";
+import { SelectableCardLink } from "@/components/shared/selectable-card-link";
+import { SkeletonBlock } from "@/components/shared/skeleton-block";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function InsightsPage() {
@@ -24,27 +24,25 @@ export default function InsightsPage() {
   const selectedId = searchParams.get("id") ?? insights.data.insights[0]?.id;
 
   if (state === "loading") return <SkeletonBlock />;
-  if (state === "empty") return <EmptyState title="\u6682\u65e0\u7814\u7a76\u7ed3\u8bba" />;
-  if (state === "error") return <ErrorState title="\u7814\u7a76\u7ed3\u8bba\u52a0\u8f7d\u5931\u8d25" />;
+  if (state === "empty") return <EmptyState title="暂无研究结论" />;
+  if (state === "error") return <ErrorState title="研究结论加载失败" />;
 
   const selectedInsight = insights.data.insights.find((item) => item.id === selectedId) ?? insights.data.insights[0];
 
   return (
-    <PageShell title="\u7814\u7a76\u7ed3\u8bba" description="\u67e5\u770b\u7ed3\u8bba\u3001\u72b6\u6001\u4e0e\u8bc1\u636e\u94fe\u3002">
-      <ContextBackBar href="/timeline" label="\u8fd4\u56de\u52a8\u6001\u65f6\u95f4\u7ebf" contextText={`\u5f53\u524d\u7ed3\u8bba\uff1a${selectedInsight.id}`} />
+    <PageShell title="研究结论" description="查看结论、状态与证据链。">
+      <ContextBackBar href="/timeline" label="返回动态时间线" contextText={`当前结论：${selectedInsight.id}`} />
 
       <div className="grid gap-4 xl:grid-cols-2">
         <div className="space-y-3">
           {insights.data.insights.map((insight) => (
-            <Link key={insight.id} href={`/insights?id=${insight.id}`} className="block">
-              <div className={insight.id === selectedInsight.id ? "rounded-xl border border-primary/60" : "rounded-xl border border-transparent"}>
-                <InsightCard insight={insight} />
-              </div>
-            </Link>
+            <SelectableCardLink key={insight.id} href={`/insights?id=${insight.id}`} selected={insight.id === selectedInsight.id}>
+              <InsightCard insight={insight} />
+            </SelectableCardLink>
           ))}
         </div>
 
-        <SectionCard title="\u7ed3\u8bba\u8be6\u60c5\u4e0e\u8bc1\u636e\u94fe" description="Phase 1 \u5c55\u793a\u9759\u6001\u8bc1\u636e\u56de\u6eaf\u7ed3\u6784\u3002">
+        <SectionCard title="结论详情与证据链" description="Phase 1 展示静态证据回溯结构。">
           <div className="space-y-3">
             <p className="text-sm font-medium">{selectedInsight.title}</p>
             <p className="text-sm text-muted-foreground">{selectedInsight.content}</p>
@@ -55,4 +53,3 @@ export default function InsightsPage() {
     </PageShell>
   );
 }
-

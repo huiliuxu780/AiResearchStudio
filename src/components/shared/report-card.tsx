@@ -1,7 +1,6 @@
-import type { WeeklyReport } from "@/types/contracts";
+﻿import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateTime } from "@/lib/formatters";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { WeeklyReport } from "@/types/contracts";
 
 interface ReportCardProps {
   report: WeeklyReport;
@@ -21,7 +20,7 @@ export function ReportCard({ report }: ReportCardProps) {
           <p className="mb-1 text-xs text-muted-foreground">重点摘要</p>
           <ul className="space-y-1 text-sm text-foreground">
             {report.highlights.map((item) => (
-              <li key={item}>• {item}</li>
+              <li key={item}>- {item}</li>
             ))}
           </ul>
         </div>
@@ -30,4 +29,3 @@ export function ReportCard({ report }: ReportCardProps) {
     </Card>
   );
 }
-
