@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -23,11 +23,11 @@ export default function DashboardPage() {
   const state = dashboard.scenario;
 
   if (state === "loading") return <SkeletonBlock />;
-  if (state === "empty") return <EmptyState title="\u4eea\u8868\u76d8\u6682\u65e0\u6570\u636e" />;
-  if (state === "error") return <ErrorState title="\u4eea\u8868\u76d8\u52a0\u8f7d\u5931\u8d25" />;
+  if (state === "empty") return <EmptyState title="仪表盘暂无数据" />;
+  if (state === "error") return <ErrorState title="仪表盘加载失败" />;
 
   return (
-    <PageShell title="\u4eea\u8868\u76d8" description="\u5feb\u901f\u67e5\u770b\u7814\u7a76\u5168\u5c40\u72b6\u6001\u4e0e\u672c\u5468\u91cd\u70b9\u3002">
+    <PageShell title="仪表盘" description="快速查看研究全局状态与本周重点。">
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {dashboard.data.metrics.map((metric) => (
           <StatCard key={metric.label} {...metric} />
@@ -35,7 +35,7 @@ export default function DashboardPage() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-3">
-        <SectionCard title="\u516d\u5c42\u5206\u5e03\u6982\u89c8" description="\u6309\u80fd\u529b\u5206\u5c42\u89c2\u5bdf\u672c\u5468\u4fe1\u606f\u5bc6\u5ea6\u3002">
+        <SectionCard title="六层分布概览" description="按能力分层观察本周信息密度。">
           <div className="space-y-2">
             {capabilityLayerDisplayOrder.map((layer) => {
               const item = dashboard.data.layer_distribution.find((entry) => entry.capability_layer === layer);
@@ -53,7 +53,7 @@ export default function DashboardPage() {
           </div>
         </SectionCard>
 
-        <SectionCard title="\u8fd1\u671f\u91cd\u70b9\u52a8\u6001" description="\u9ad8\u4ef7\u503c\u4e8b\u5b9e\u5361\u7247\u3002">
+        <SectionCard title="近期重点动态" description="高价值事实卡片。">
           <div className="space-y-3">
             {dashboard.data.recent_highlights.map((item) => (
               <Link
@@ -68,7 +68,7 @@ export default function DashboardPage() {
           </div>
         </SectionCard>
 
-        <SectionCard title="\u6700\u65b0\u7814\u7a76\u7ed3\u8bba" description="\u6700\u8fd1\u66f4\u65b0\u7684\u7814\u7a76\u5224\u65ad\u3002">
+        <SectionCard title="最新研究结论" description="最近更新的研究判断。">
           <div className="space-y-3">
             {dashboard.data.latest_insights.map((insight) => (
               <Link key={insight.id} href={`/insights?id=${insight.id}`} className="block rounded-xl border border-transparent transition-all hover:-translate-y-0.5 hover:border-primary/60">
@@ -79,7 +79,7 @@ export default function DashboardPage() {
         </SectionCard>
       </section>
 
-      <SectionCard title="\u672c\u5468\u5efa\u8bae\u5b9e\u9a8c" description="\u7528\u4e8e\u63a8\u8fdb PoC \u4e0e\u9009\u578b\u9a8c\u8bc1\u3002">
+      <SectionCard title="本周建议实验" description="用于推进 PoC 与选型验证。">
         <ul className="space-y-2 text-sm">
           {dashboard.data.experiment_suggestions.map((item) => (
             <li key={item} className="rounded-md border border-border/50 px-3 py-2">
@@ -89,10 +89,11 @@ export default function DashboardPage() {
         </ul>
       </SectionCard>
 
-      <SectionCard title="\u72b6\u6001\u6f14\u793a" description="\u901a\u8fc7 URL \u53c2\u6570\u5207\u6362\uff1fstate=loading|empty|error">
-        <p className="text-sm text-muted-foreground">\u5f53\u524d\u72b6\u6001\uff1a{state}\u3002\u793a\u4f8b\uff1a/timeline?state=empty</p>
+      <SectionCard title="状态演示" description="通过 URL 参数切换？state=loading|empty|error">
+        <p className="text-sm text-muted-foreground">当前状态：{state}。示例：/timeline?state=empty</p>
       </SectionCard>
     </PageShell>
   );
 }
+
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -36,24 +36,24 @@ export default function TimelinePage() {
   }, [timeline.data.items, topic, itemId]);
 
   if (state === "loading") return <SkeletonBlock />;
-  if (state === "empty") return <EmptyState title="\u52a8\u6001\u65f6\u95f4\u7ebf\u6682\u65e0\u5185\u5bb9" />;
-  if (state === "error") return <ErrorState title="\u52a8\u6001\u65f6\u95f4\u7ebf\u52a0\u8f7d\u5931\u8d25" />;
+  if (state === "empty") return <EmptyState title="动态时间线暂无内容" />;
+  if (state === "error") return <ErrorState title="动态时间线加载失败" />;
 
   const topicLabel = topic ? topicTypeLabelMap[topic as keyof typeof topicTypeLabelMap] ?? topic : null;
 
   return (
-    <PageShell title="\u52a8\u6001\u65f6\u95f4\u7ebf" description="\u6309\u65f6\u95f4\u67e5\u770b\u4e8b\u5b9e\u52a8\u6001\uff0c\u652f\u6301\u6765\u6e90/\u5c42\u7ea7/\u4e3b\u9898\u7b5b\u9009\u3002">
+    <PageShell title="动态时间线" description="按时间查看事实动态，支持来源/层级/主题筛选。">
       <ContextBackBar
         href="/"
-        label="\u8fd4\u56de\u4eea\u8868\u76d8"
-        contextText={topicLabel ? `\u4e0a\u4e0b\u6587\uff1a${topicLabel}` : "\u4e0a\u4e0b\u6587\uff1a\u5168\u90e8\u4e3b\u9898"}
+        label="返回仪表盘"
+        contextText={topicLabel ? `上下文：${topicLabel}` : "上下文：全部主题"}
       />
 
       <FilterBar sourceTypes={timeline.data.filters.source_types} topicTypes={timeline.data.filters.topic_types} />
 
       <div className="space-y-3">
         {filteredItems.length === 0 ? (
-          <EmptyState title="\u5f53\u524d\u4e3b\u9898\u65e0\u5339\u914d\u6761\u76ee" />
+          <EmptyState title="当前主题无匹配条目" />
         ) : (
           filteredItems.map((item) => <TimelineItemCard key={item.id} item={item} />)
         )}
@@ -61,4 +61,5 @@ export default function TimelinePage() {
     </PageShell>
   );
 }
+
 
