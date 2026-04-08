@@ -48,7 +48,7 @@ $journeyChecks = @(
 $semanticChecks = @(
   @{
     route = "/capability-map?layer=platform"
-    expected = "data-focus-layer=\"platform\""
+    expected = "data-layer-focused=\"true\""
     label = "capability map layer focus query"
   },
   @{
