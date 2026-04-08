@@ -1,0 +1,44 @@
+{
+  "name": "pm",
+  "version": "0.1.0",
+  "description": "Product manager agent for requirement decomposition, IA design, page definitions, field design, state transitions, edge cases, task breakdown, and acceptance criteria.",
+  "author": {
+    "name": "AiResearchStudio",
+    "email": "team@example.com",
+    "url": "https://example.com"
+  },
+  "homepage": "https://example.com/pm-agent",
+  "repository": "https://example.com/pm-agent-repo",
+  "license": "Proprietary",
+  "keywords": [
+    "product-manager",
+    "prd",
+    "requirement-analysis",
+    "saas",
+    "agent"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PM",
+    "shortDescription": "Structured requirement outputs for direct engineering execution",
+    "longDescription": "PM agent focused on turning ambiguous ideas into engineering-ready deliverables, including IA, fields, state flows, edge cases, and acceptance standards.",
+    "developerName": "AiResearchStudio",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://example.com/pm-agent",
+    "privacyPolicyURL": "https://example.com/privacy",
+    "termsOfServiceURL": "https://example.com/terms",
+    "defaultPrompt": [
+      "Break requirements into engineering-ready tasks with measurable acceptance criteria",
+      "Complete admin page IA, fields, and state transitions based on business goals",
+      "Generate PRD core sections including edge cases and exception handling strategy"
+    ],
+    "brandColor": "#0F766E",
+    "composerIcon": "./assets/pm-small.svg",
+    "logo": "./assets/pm.png",
+    "screenshots": []
+  }
+}

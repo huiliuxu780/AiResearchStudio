@@ -1,0 +1,6 @@
+interface:
+  display_name: "PM"
+  short_description: "产品经理代理，输出可执行需求与任务拆解"
+  default_prompt: "把当前需求整理成研发可直接执行的产物，补齐字段、状态流转、边界条件与验收标准。"
+  icon_small: "./assets/pm-small.svg"
+  icon_large: "./assets/pm.png"
