@@ -93,7 +93,7 @@ export default function TimelinePage() {
 
         <div className="space-y-3">
           {filteredItems.length === 0 ? (
-            <EmptyState title="当前筛选条件无匹配条目" />
+            <EmptyState title="当前筛选条件无匹配条目" onReset={handleResetFilters} />
           ) : (
             filteredItems.map((item) => <TimelineItemCard key={item.id} item={item} />)
           )}
@@ -102,4 +102,5 @@ export default function TimelinePage() {
     </ScenarioStateGate>
   );
 }
+
 
