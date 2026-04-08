@@ -35,7 +35,7 @@ export default function CapabilityMapPage() {
   return (
     <ScenarioStateGate scenario={state} emptyTitle="能力地图暂无条目" errorTitle="能力地图加载失败">
       <PageShell title="能力地图" description={description}>
-        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3" data-focus-layer={query.layer ?? "all"}>
           {sortedLayers.map((layer) => (
             <CapabilityLayerCard key={layer.capability_layer} layer={layer} />
           ))}

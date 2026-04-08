@@ -47,6 +47,11 @@ $journeyChecks = @(
 
 $semanticChecks = @(
   @{
+    route = "/capability-map?layer=platform"
+    expected = "data-focus-layer=\"platform\""
+    label = "capability map layer focus query"
+  },
+  @{
     route = "/timeline?topic=invalid_topic"
     expected = "Workflow"
     label = "timeline invalid topic fallback"
