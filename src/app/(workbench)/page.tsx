@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -11,6 +11,7 @@ import { StatCard } from "@/components/shared/stat-card";
 import { capabilityLayerDisplayOrder } from "@/lib/constants";
 import { capabilityLayerLabelMap } from "@/lib/label-maps";
 import { getStateQuery } from "@/lib/workbench-query";
+import { getCapabilityMapHref, getInsightsHref, getTimelineHref } from "@/lib/workbench-routes";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function DashboardPage() {
@@ -37,7 +38,7 @@ export default function DashboardPage() {
                 return (
                   <Link
                     key={layer}
-                    href={`/capability-map?layer=${layer}`}
+                    href={getCapabilityMapHref({ layer })}
                     className="group flex items-center justify-between rounded-md border border-border/50 px-3 py-2 text-sm transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/40"
                   >
                     <span className="transition-colors group-hover:text-foreground">{capabilityLayerLabelMap[layer]}</span>
@@ -53,7 +54,7 @@ export default function DashboardPage() {
               {dashboard.data.recent_highlights.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/timeline?item_id=${item.id}&topic=${item.topic_type}`}
+                  href={getTimelineHref({ item_id: item.id, topic: item.topic_type })}
                   className="group block rounded-md border border-border/60 bg-background/50 p-3 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:bg-accent/30"
                 >
                   <p className="text-sm font-medium transition-colors group-hover:text-foreground">{item.title}</p>
@@ -68,7 +69,7 @@ export default function DashboardPage() {
               {dashboard.data.latest_insights.map((insight) => (
                 <Link
                   key={insight.id}
-                  href={`/insights?id=${insight.id}`}
+                  href={getInsightsHref({ id: insight.id })}
                   className="block rounded-xl border border-transparent transition-all hover:-translate-y-0.5 hover:border-primary/60"
                 >
                   <InsightCard insight={insight} />

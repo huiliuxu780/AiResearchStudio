@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useSearchParams } from "next/navigation";
 
@@ -10,6 +10,7 @@ import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { SectionCard } from "@/components/shared/section-card";
 import { SelectableCardLink } from "@/components/shared/selectable-card-link";
 import { getDetailQuery, resolveSelectedId } from "@/lib/workbench-query";
+import { getInsightsHref } from "@/lib/workbench-routes";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function InsightsPage() {
@@ -30,7 +31,7 @@ export default function InsightsPage() {
         <div className="grid gap-4 xl:grid-cols-2">
           <div className="space-y-3">
             {insights.data.insights.map((insight) => (
-              <SelectableCardLink key={insight.id} href={`/insights?id=${insight.id}`} selected={insight.id === selectedInsight.id}>
+              <SelectableCardLink key={insight.id} href={getInsightsHref({ id: insight.id })} selected={insight.id === selectedInsight.id}>
                 <InsightCard insight={insight} />
               </SelectableCardLink>
             ))}

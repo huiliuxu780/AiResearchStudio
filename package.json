@@ -16,7 +16,8 @@
     "demo:check": "powershell -ExecutionPolicy Bypass -File ./scripts/phase1-demo-check.ps1",
     "check:encoding": "powershell -ExecutionPolicy Bypass -File ./scripts/check-encoding.ps1",
     "check:query-scope": "powershell -ExecutionPolicy Bypass -File ./scripts/check-query-scope.ps1",
-    "preflight": "npm run type-check && npm run lint && npm run build && npm run check:encoding && npm run check:query-scope",
+    "check:query-links": "powershell -ExecutionPolicy Bypass -File ./scripts/check-query-links.ps1",
+    "preflight": "npm run type-check && npm run lint && npm run build && npm run check:encoding && npm run check:query-scope && npm run check:query-links",
     "dev:raw": "next dev -p 4000"
   },
   "keywords": [],

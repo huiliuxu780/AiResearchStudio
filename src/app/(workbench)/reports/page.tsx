@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useSearchParams } from "next/navigation";
 
@@ -10,6 +10,7 @@ import { SectionCard } from "@/components/shared/section-card";
 import { SelectableCardLink } from "@/components/shared/selectable-card-link";
 import { Button } from "@/components/ui/button";
 import { getDetailQuery, resolveSelectedId } from "@/lib/workbench-query";
+import { getReportsHref } from "@/lib/workbench-routes";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function ReportsPage() {
@@ -44,7 +45,7 @@ export default function ReportsPage() {
         <div className="grid gap-4 xl:grid-cols-2">
           <div className="space-y-3">
             {reports.data.reports.map((report) => (
-              <SelectableCardLink key={report.id} href={`/reports?id=${report.id}`} selected={report.id === selectedReport.id}>
+              <SelectableCardLink key={report.id} href={getReportsHref({ id: report.id })} selected={report.id === selectedReport.id}>
                 <ReportCard report={report} />
               </SelectableCardLink>
             ))}
