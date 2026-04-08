@@ -3,7 +3,10 @@ param(
   [int]$TimeoutSec = 30,
   [int]$MaxAttempts = 3,
   [int]$RetryDelaySec = 2,
-  [bool]$DisableKeepAlive = $true
+  [bool]$DisableKeepAlive = $true,
+  [int]$WarmupTimeoutSec = 15,
+  [int]$WarmupMaxAttempts = 2,
+  [bool]$AbortOnWarmupFailure = $true
 )
 
 $routes = @(
@@ -138,6 +141,7 @@ function Invoke-WithRetry {
 Write-Output "Phase 1 demo route check"
 Write-Output "Base URL: $BaseUrl"
 Write-Output "Request options: timeout=${TimeoutSec}s, maxAttempts=$MaxAttempts, retryDelay=${RetryDelaySec}s, disableKeepAlive=$DisableKeepAlive"
+Write-Output "Warmup options: timeout=${WarmupTimeoutSec}s, maxAttempts=$WarmupMaxAttempts, abortOnFailure=$AbortOnWarmupFailure"
 
 $failed = @()
 $stats = @{
@@ -148,9 +152,16 @@ $stats = @{
 }
 
 # Warm up dev server once to avoid first-request cold start flakiness.
-$warmup = Invoke-WithRetry -Url "$BaseUrl/" -RequestTimeoutSec 60 -RequestMaxAttempts 2 -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
+$warmup = Invoke-WithRetry -Url "$BaseUrl/" -RequestTimeoutSec $WarmupTimeoutSec -RequestMaxAttempts $WarmupMaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 if (-not $warmup.ok) {
-  Write-Output "[WARN] warmup failed: $($warmup.error)"
+  Write-Output "[FAIL] warmup failed: $($warmup.error)"
+
+  if ($AbortOnWarmupFailure) {
+    Write-Output "`nAborting early because server is not ready. Start dev server first (npm run dev) and retry demo:check."
+    exit 1
+  }
+
+  Write-Output "[WARN] continue despite warmup failure (AbortOnWarmupFailure=false)."
 }
 
 foreach ($route in $routes) {
