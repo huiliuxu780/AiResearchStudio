@@ -6,7 +6,8 @@ param(
   [bool]$DisableKeepAlive = $true,
   [int]$WarmupTimeoutSec = 15,
   [int]$WarmupMaxAttempts = 2,
-  [bool]$AbortOnWarmupFailure = $true
+  [bool]$AbortOnWarmupFailure = $true,
+  [bool]$StopOnFirstFailure = $true
 )
 
 $routes = @(
@@ -90,6 +91,14 @@ $semanticChecks = @(
   }
 )
 
+$script:failed = @()
+$script:stats = @{
+  routeOk = 0
+  journeyOk = 0
+  semanticOk = 0
+  retriedSuccess = 0
+}
+
 function Invoke-WithRetry {
   param(
     [string]$Url,
@@ -138,27 +147,56 @@ function Invoke-WithRetry {
   }
 }
 
+function Write-CheckSummary {
+  Write-Output ""
+  Write-Output "Summary: routeOk=$($script:stats.routeOk)/$($routes.Count), journeyOk=$($script:stats.journeyOk)/$($journeyChecks.Count), semanticOk=$($script:stats.semanticOk)/$($semanticChecks.Count), retriedSuccess=$($script:stats.retriedSuccess)"
+}
+
+function Exit-WithFailures {
+  param(
+    [string]$Reason
+  )
+
+  Write-Output ""
+  Write-Output $Reason
+  Write-CheckSummary
+
+  if ($script:failed.Count -gt 0) {
+    Write-Output "`nFailed checks:"
+    $script:failed | Select-Object -Unique | ForEach-Object { Write-Output "- $_" }
+  }
+
+  exit 1
+}
+
+function Register-Failure {
+  param(
+    [string]$FailureLine,
+    [string]$FailureKey
+  )
+
+  Write-Output "[FAIL] $FailureLine"
+  $script:failed += $FailureKey
+
+  if ($StopOnFirstFailure) {
+    Exit-WithFailures "Aborting early due to first failure. Re-run with -StopOnFirstFailure:`$false for full diagnostics."
+  }
+}
+
 Write-Output "Phase 1 demo route check"
 Write-Output "Base URL: $BaseUrl"
 Write-Output "Request options: timeout=${TimeoutSec}s, maxAttempts=$MaxAttempts, retryDelay=${RetryDelaySec}s, disableKeepAlive=$DisableKeepAlive"
 Write-Output "Warmup options: timeout=${WarmupTimeoutSec}s, maxAttempts=$WarmupMaxAttempts, abortOnFailure=$AbortOnWarmupFailure"
-
-$failed = @()
-$stats = @{
-  routeOk = 0
-  journeyOk = 0
-  semanticOk = 0
-  retriedSuccess = 0
-}
+Write-Output "Failure mode: stopOnFirstFailure=$StopOnFirstFailure"
 
 # Warm up dev server once to avoid first-request cold start flakiness.
 $warmup = Invoke-WithRetry -Url "$BaseUrl/" -RequestTimeoutSec $WarmupTimeoutSec -RequestMaxAttempts $WarmupMaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 if (-not $warmup.ok) {
   Write-Output "[FAIL] warmup failed: $($warmup.error)"
+  $script:failed += "$BaseUrl/"
 
   if ($AbortOnWarmupFailure) {
-    Write-Output "`nAborting early because server is not ready. Start dev server first (npm run dev) and retry demo:check."
-    exit 1
+    Exit-WithFailures "Aborting early because server is not ready. Start dev server first (npm run dev) and retry demo:check."
   }
 
   Write-Output "[WARN] continue despite warmup failure (AbortOnWarmupFailure=false)."
@@ -169,23 +207,21 @@ foreach ($route in $routes) {
   $result = Invoke-WithRetry -Url $url -RequestTimeoutSec $TimeoutSec -RequestMaxAttempts $MaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 
   if (-not $result.ok) {
-    Write-Output "[FAIL] $url ($($result.error))"
-    $failed += $url
+    Register-Failure -FailureLine "$url ($($result.error))" -FailureKey $url
     continue
   }
 
   $res = $result.response
   if ($res.StatusCode -ge 200 -and $res.StatusCode -lt 400) {
-    $stats.routeOk += 1
+    $script:stats.routeOk += 1
     if ($result.attempts -gt 1) {
-      $stats.retriedSuccess += 1
+      $script:stats.retriedSuccess += 1
       Write-Output "[OK] $url ($($res.StatusCode), retry=$($result.attempts))"
     } else {
       Write-Output "[OK] $url ($($res.StatusCode))"
     }
   } else {
-    Write-Output "[WARN] $url ($($res.StatusCode))"
-    $failed += $url
+    Register-Failure -FailureLine "$url (status=$($res.StatusCode))" -FailureKey $url
   }
 }
 
@@ -197,29 +233,26 @@ foreach ($check in $journeyChecks) {
   $result = Invoke-WithRetry -Url $url -RequestTimeoutSec $TimeoutSec -RequestMaxAttempts $MaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 
   if (-not $result.ok) {
-    Write-Output "[FAIL] $($check.label) ($($result.error))"
-    $failed += $url
+    Register-Failure -FailureLine "$($check.label) ($($result.error))" -FailureKey $url
     continue
   }
 
   $res = $result.response
   if ($res.StatusCode -lt 200 -or $res.StatusCode -ge 400) {
-    Write-Output "[FAIL] $($check.label) - non-success status: $($res.StatusCode)"
-    $failed += $url
+    Register-Failure -FailureLine "$($check.label) - non-success status: $($res.StatusCode)" -FailureKey $url
     continue
   }
 
   if ($res.Content -match [regex]::Escape($check.expected)) {
-    $stats.journeyOk += 1
+    $script:stats.journeyOk += 1
     if ($result.attempts -gt 1) {
-      $stats.retriedSuccess += 1
+      $script:stats.retriedSuccess += 1
       Write-Output "[OK] $($check.label) (retry=$($result.attempts))"
     } else {
       Write-Output "[OK] $($check.label)"
     }
   } else {
-    Write-Output "[FAIL] $($check.label) - expected token not found: $($check.expected)"
-    $failed += $url
+    Register-Failure -FailureLine "$($check.label) - expected token not found: $($check.expected)" -FailureKey $url
   }
 }
 
@@ -231,40 +264,33 @@ foreach ($check in $semanticChecks) {
   $result = Invoke-WithRetry -Url $url -RequestTimeoutSec $TimeoutSec -RequestMaxAttempts $MaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 
   if (-not $result.ok) {
-    Write-Output "[FAIL] $($check.label) ($($result.error))"
-    $failed += $url
+    Register-Failure -FailureLine "$($check.label) ($($result.error))" -FailureKey $url
     continue
   }
 
   $res = $result.response
   if ($res.StatusCode -lt 200 -or $res.StatusCode -ge 400) {
-    Write-Output "[FAIL] $($check.label) - non-success status: $($res.StatusCode)"
-    $failed += $url
+    Register-Failure -FailureLine "$($check.label) - non-success status: $($res.StatusCode)" -FailureKey $url
     continue
   }
 
   if ($res.Content -match [regex]::Escape($check.expected)) {
-    $stats.semanticOk += 1
+    $script:stats.semanticOk += 1
     if ($result.attempts -gt 1) {
-      $stats.retriedSuccess += 1
+      $script:stats.retriedSuccess += 1
       Write-Output "[OK] $($check.label) (retry=$($result.attempts))"
     } else {
       Write-Output "[OK] $($check.label)"
     }
   } else {
-    Write-Output "[FAIL] $($check.label) - expected token not found: $($check.expected)"
-    $failed += $url
+    Register-Failure -FailureLine "$($check.label) - expected token not found: $($check.expected)" -FailureKey $url
   }
 }
 
-Write-Output ""
-Write-Output "Summary: routeOk=$($stats.routeOk)/$($routes.Count), journeyOk=$($stats.journeyOk)/$($journeyChecks.Count), semanticOk=$($stats.semanticOk)/$($semanticChecks.Count), retriedSuccess=$($stats.retriedSuccess)"
-
-if ($failed.Count -gt 0) {
-  Write-Output "`nFailed checks:"
-  $failed | Select-Object -Unique | ForEach-Object { Write-Output "- $_" }
-  exit 1
+if ($script:failed.Count -gt 0) {
+  Exit-WithFailures "Demo checks completed with failures."
 }
 
+Write-CheckSummary
 Write-Output "`nAll demo routes, journey checks, and semantic checks responded successfully."
 exit 0
