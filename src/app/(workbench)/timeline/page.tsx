@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useCallback, useMemo } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PageShell } from "@/components/layout/page-shell";
 import { ContextBackBar } from "@/components/shared/context-back-bar";
@@ -12,15 +12,37 @@ import { TimelineItemCard } from "@/components/shared/timeline-item-card";
 import { topicTypeLabelMap } from "@/lib/label-maps";
 import { getTimelineQuery, resolveSelectedId } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
+import type { TopicType } from "@/types/enums";
 
 export default function TimelinePage() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const query = getTimelineQuery(searchParams);
   const topic = query.topic;
   const itemId = query.item_id;
   const repository = getWorkbenchRepository();
   const timeline = repository.getTimeline(query);
   const state = timeline.scenario;
+
+  const handleTopicChange = useCallback(
+    (nextTopic?: TopicType) => {
+      const next = new URLSearchParams(searchParams.toString());
+
+      if (nextTopic) {
+        next.set("topic", nextTopic);
+      } else {
+        next.delete("topic");
+      }
+
+      // Topic changed means previously focused item may not belong to new topic filter.
+      next.delete("item_id");
+
+      const queryString = next.toString();
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams]
+  );
 
   const filteredItems = useMemo(() => {
     const byTopic = topic ? timeline.data.items.filter((item) => item.topic_type === topic) : timeline.data.items;
@@ -44,7 +66,12 @@ export default function TimelinePage() {
           contextText={topicLabel ? `上下文：${topicLabel}` : "上下文：全部主题"}
         />
 
-        <FilterBar sourceTypes={timeline.data.filters.source_types} topicTypes={timeline.data.filters.topic_types} />
+        <FilterBar
+          sourceTypes={timeline.data.filters.source_types}
+          topicTypes={timeline.data.filters.topic_types}
+          selectedTopic={topic}
+          onTopicChange={handleTopicChange}
+        />
 
         <div className="space-y-3">
           {filteredItems.length === 0 ? (
@@ -57,3 +84,4 @@ export default function TimelinePage() {
     </ScenarioStateGate>
   );
 }
+
