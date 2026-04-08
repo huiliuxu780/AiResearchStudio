@@ -48,8 +48,13 @@ $journeyChecks = @(
 $semanticChecks = @(
   @{
     route = "/capability-map?layer=platform"
-    expected = "data-layer-focused=\"true\""
-    label = "capability map layer focus query"
+    expected = "data-focused-layer-first=\"platform\""
+    label = "capability map layer focus ordering"
+  },
+  @{
+    route = "/capability-map?layer=invalid_layer"
+    expected = "data-focus-layer=\"all\""
+    label = "capability map invalid layer fallback"
   },
   @{
     route = "/timeline?topic=invalid_topic"
