@@ -1,4 +1,4 @@
-﻿param(
+param(
   [string]$BaseUrl = "http://localhost:4000"
 )
 
@@ -45,23 +45,69 @@ $semanticChecks = @(
   }
 )
 
+function Invoke-WithRetry {
+  param(
+    [string]$Url,
+    [int]$TimeoutSec = 30,
+    [int]$MaxAttempts = 3,
+    [int]$RetryDelaySec = 2
+  )
+
+  $lastError = "unknown"
+
+  for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+    try {
+      $response = Invoke-WebRequest -Uri $Url -Method GET -UseBasicParsing -TimeoutSec $TimeoutSec
+      return @{
+        ok = $true
+        response = $response
+        attempts = $attempt
+      }
+    } catch {
+      $lastError = $_.Exception.Message
+      if ($attempt -lt $MaxAttempts) {
+        Start-Sleep -Seconds $RetryDelaySec
+      }
+    }
+  }
+
+  return @{
+    ok = $false
+    error = $lastError
+    attempts = $MaxAttempts
+  }
+}
+
 Write-Output "Phase 1 demo route check"
 Write-Output "Base URL: $BaseUrl"
 
 $failed = @()
 
+# Warm up dev server once to avoid first-request cold start flakiness.
+$warmup = Invoke-WithRetry -Url "$BaseUrl/" -TimeoutSec 60 -MaxAttempts 2 -RetryDelaySec 2
+if (-not $warmup.ok) {
+  Write-Output "[WARN] warmup failed: $($warmup.error)"
+}
+
 foreach ($route in $routes) {
   $url = "$BaseUrl$route"
-  try {
-    $res = Invoke-WebRequest -Uri $url -Method GET -UseBasicParsing -TimeoutSec 30
-    if ($res.StatusCode -ge 200 -and $res.StatusCode -lt 400) {
-      Write-Output "[OK] $url ($($res.StatusCode))"
+  $result = Invoke-WithRetry -Url $url -TimeoutSec 30 -MaxAttempts 3 -RetryDelaySec 2
+
+  if (-not $result.ok) {
+    Write-Output "[FAIL] $url ($($result.error))"
+    $failed += $url
+    continue
+  }
+
+  $res = $result.response
+  if ($res.StatusCode -ge 200 -and $res.StatusCode -lt 400) {
+    if ($result.attempts -gt 1) {
+      Write-Output "[OK] $url ($($res.StatusCode), retry=$($result.attempts))"
     } else {
-      Write-Output "[WARN] $url ($($res.StatusCode))"
-      $failed += $url
+      Write-Output "[OK] $url ($($res.StatusCode))"
     }
-  } catch {
-    Write-Output "[FAIL] $url ($($_.Exception.Message))"
+  } else {
+    Write-Output "[WARN] $url ($($res.StatusCode))"
     $failed += $url
   }
 }
@@ -71,22 +117,29 @@ Write-Output "Semantic fallback checks"
 
 foreach ($check in $semanticChecks) {
   $url = "$BaseUrl$($check.route)"
-  try {
-    $res = Invoke-WebRequest -Uri $url -Method GET -UseBasicParsing -TimeoutSec 30
-    if ($res.StatusCode -lt 200 -or $res.StatusCode -ge 400) {
-      Write-Output "[FAIL] $($check.label) - non-success status: $($res.StatusCode)"
-      $failed += $url
-      continue
-    }
+  $result = Invoke-WithRetry -Url $url -TimeoutSec 30 -MaxAttempts 3 -RetryDelaySec 2
 
-    if ($res.Content -match [regex]::Escape($check.expected)) {
-      Write-Output "[OK] $($check.label)"
+  if (-not $result.ok) {
+    Write-Output "[FAIL] $($check.label) ($($result.error))"
+    $failed += $url
+    continue
+  }
+
+  $res = $result.response
+  if ($res.StatusCode -lt 200 -or $res.StatusCode -ge 400) {
+    Write-Output "[FAIL] $($check.label) - non-success status: $($res.StatusCode)"
+    $failed += $url
+    continue
+  }
+
+  if ($res.Content -match [regex]::Escape($check.expected)) {
+    if ($result.attempts -gt 1) {
+      Write-Output "[OK] $($check.label) (retry=$($result.attempts))"
     } else {
-      Write-Output "[FAIL] $($check.label) - expected token not found: $($check.expected)"
-      $failed += $url
+      Write-Output "[OK] $($check.label)"
     }
-  } catch {
-    Write-Output "[FAIL] $($check.label) ($($_.Exception.Message))"
+  } else {
+    Write-Output "[FAIL] $($check.label) - expected token not found: $($check.expected)"
     $failed += $url
   }
 }
