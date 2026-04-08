@@ -9,7 +9,7 @@ import { InsightCard } from "@/components/shared/insight-card";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { SectionCard } from "@/components/shared/section-card";
 import { SelectableCardLink } from "@/components/shared/selectable-card-link";
-import { getDetailQuery } from "@/lib/workbench-query";
+import { getDetailQuery, resolveSelectedId } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function InsightsPage() {
@@ -18,7 +18,7 @@ export default function InsightsPage() {
   const repository = getWorkbenchRepository();
   const insights = repository.getInsights(query);
   const state = insights.scenario;
-  const selectedId = query.id ?? insights.data.insights[0]?.id;
+  const selectedId = resolveSelectedId(insights.data.insights, query.id);
 
   const selectedInsight = insights.data.insights.find((item) => item.id === selectedId) ?? insights.data.insights[0];
 
@@ -48,4 +48,3 @@ export default function InsightsPage() {
     </ScenarioStateGate>
   );
 }
-

@@ -10,7 +10,7 @@ import { FilterBar } from "@/components/shared/filter-bar";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { TimelineItemCard } from "@/components/shared/timeline-item-card";
 import { topicTypeLabelMap } from "@/lib/label-maps";
-import { getTimelineQuery } from "@/lib/workbench-query";
+import { getTimelineQuery, resolveSelectedId } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function TimelinePage() {
@@ -24,12 +24,13 @@ export default function TimelinePage() {
 
   const filteredItems = useMemo(() => {
     const byTopic = topic ? timeline.data.items.filter((item) => item.topic_type === topic) : timeline.data.items;
-    if (!itemId) return byTopic;
+    const selectedId = resolveSelectedId(byTopic, itemId);
+    if (!selectedId) return byTopic;
 
-    const selected = byTopic.find((item) => item.id === itemId);
+    const selected = byTopic.find((item) => item.id === selectedId);
     if (!selected) return byTopic;
 
-    return [selected, ...byTopic.filter((item) => item.id !== itemId)];
+    return [selected, ...byTopic.filter((item) => item.id !== selectedId)];
   }, [timeline.data.items, topic, itemId]);
 
   const topicLabel = topic ? topicTypeLabelMap[topic as keyof typeof topicTypeLabelMap] ?? topic : null;
@@ -56,4 +57,3 @@ export default function TimelinePage() {
     </ScenarioStateGate>
   );
 }
-
