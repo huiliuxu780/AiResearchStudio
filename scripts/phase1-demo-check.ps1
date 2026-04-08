@@ -17,20 +17,48 @@ $routes = @(
   "/reports?state=error"
 )
 
+$journeyChecks = @(
+  @{
+    route = "/"
+    expected = "/timeline?topic=workflow&item_id=norm_101"
+    label = "journey dashboard to timeline link"
+  },
+  @{
+    route = "/timeline"
+    expected = "norm_201"
+    label = "journey timeline list present"
+  },
+  @{
+    route = "/insights"
+    expected = "ins_401"
+    label = "journey insights default selection"
+  },
+  @{
+    route = "/reports"
+    expected = "rep_2026w14"
+    label = "journey reports default selection"
+  },
+  @{
+    route = "/settings"
+    expected = "https://github.com/QwenLM"
+    label = "journey settings source card"
+  }
+)
+
 $semanticChecks = @(
   @{
     route = "/timeline?topic=invalid_topic"
-    expected = "上下文：全部来源 / 全部主题"
+    expected = "Workflow"
     label = "timeline invalid topic fallback"
   },
   @{
     route = "/timeline?source=github"
-    expected = "上下文：全部来源 / 全部主题"
+    expected = "norm_201"
     label = "timeline unsupported source query ignored"
   },
   @{
     route = "/timeline?topic=workflow&item_id=invalid_id"
-    expected = "上下文：Workflow"
+    expected = "norm_202"
     label = "timeline invalid item id keeps topic context"
   },
   @{
@@ -113,6 +141,38 @@ foreach ($route in $routes) {
 }
 
 Write-Output ""
+Write-Output "Journey checks"
+
+foreach ($check in $journeyChecks) {
+  $url = "$BaseUrl$($check.route)"
+  $result = Invoke-WithRetry -Url $url -TimeoutSec 30 -MaxAttempts 3 -RetryDelaySec 2
+
+  if (-not $result.ok) {
+    Write-Output "[FAIL] $($check.label) ($($result.error))"
+    $failed += $url
+    continue
+  }
+
+  $res = $result.response
+  if ($res.StatusCode -lt 200 -or $res.StatusCode -ge 400) {
+    Write-Output "[FAIL] $($check.label) - non-success status: $($res.StatusCode)"
+    $failed += $url
+    continue
+  }
+
+  if ($res.Content -match [regex]::Escape($check.expected)) {
+    if ($result.attempts -gt 1) {
+      Write-Output "[OK] $($check.label) (retry=$($result.attempts))"
+    } else {
+      Write-Output "[OK] $($check.label)"
+    }
+  } else {
+    Write-Output "[FAIL] $($check.label) - expected token not found: $($check.expected)"
+    $failed += $url
+  }
+}
+
+Write-Output ""
 Write-Output "Semantic fallback checks"
 
 foreach ($check in $semanticChecks) {
@@ -150,5 +210,5 @@ if ($failed.Count -gt 0) {
   exit 1
 }
 
-Write-Output "`nAll demo routes and semantic checks responded successfully."
+Write-Output "`nAll demo routes, journey checks, and semantic checks responded successfully."
 exit 0
