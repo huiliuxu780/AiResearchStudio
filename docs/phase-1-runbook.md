@@ -38,6 +38,7 @@ npm run demo:check
 - `check:encoding`
 - `check:query-scope`
 - `check:query-links`
+- `check:query-route-helpers`
 
 ## Demo Check Coverage
 `npm run demo:check` now covers:

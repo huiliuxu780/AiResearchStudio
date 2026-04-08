@@ -27,12 +27,12 @@
 - Loading/empty/error states are available on every top-level page via `?state=`.
 
 ## Query Governance Checklist
-- Query parsing must use `getStateQuery` / `getTimelineQuery` / `getDetailQuery`.
+- Query parsing must use `getStateQuery` / `getCapabilityMapQuery` / `getTimelineQuery` / `getDetailQuery`.
 - Query-bearing href construction must use `src/lib/workbench-routes.ts` helpers.
 - `source` must stay out of URL in Phase 1.
 
 ## Automated Gate Checklist
-- `npm run preflight` passes.
+- `npm run preflight` passes (including `check:query-route-helpers`).
 - `npm run demo:check` passes route status checks.
 - `npm run demo:check` passes journey checks (`/ -> /timeline -> /insights -> /reports -> /settings`).
 - `npm run demo:check` passes semantic fallback checks.
