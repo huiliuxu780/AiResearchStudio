@@ -129,10 +129,11 @@
 - Props：
   - `sourceTypes: SourceType[]`
   - `topicTypes: TopicType[]`
-- 说明：Phase 1 仅展示筛选 UI；尚未把选择值回写 URL。
+- 说明：当前支持来源与主题筛选联动，其中主题会回写 URL；来源筛选目前仅在页面内生效（不回写 URL）。
 
 ## 5. 组合建议
 - 页面必须先走 `ScenarioStateGate`，再渲染 `PageShell`。
 - 需要“列表 + 右侧详情”时，左侧列表项统一使用 `SelectableCardLink`。
 - 需要“返回仪表盘 + 当前上下文”时统一使用 `ContextBackBar`。
 - 新页面优先复用上述组件；避免新增同类展示壳组件。
+

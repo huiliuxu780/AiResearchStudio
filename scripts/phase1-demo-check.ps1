@@ -20,7 +20,7 @@ $routes = @(
 $semanticChecks = @(
   @{
     route = "/timeline?topic=invalid_topic"
-    expected = "上下文：全部主题"
+    expected = "上下文：全部来源 / 全部主题"
     label = "timeline invalid topic fallback"
   },
   @{
@@ -89,3 +89,4 @@ if ($failed.Count -gt 0) {
 
 Write-Output "`nAll demo routes and semantic checks responded successfully."
 exit 0
+
