@@ -6,9 +6,17 @@ import { PageShell } from "@/components/layout/page-shell";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { SectionCard } from "@/components/shared/section-card";
 import { formatDateTime } from "@/lib/formatters";
-import { sourceStatusLabelMap, sourceTypeLabelMap } from "@/lib/label-maps";
+import {
+  crawlStrategyLabelMap,
+  sourceEnabledLabelMap,
+  sourceStatusLabelMap,
+  sourceTypeLabelMap
+} from "@/lib/label-maps";
 import { getStateQuery } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
+
+const getCrawlStrategyLabel = (crawlStrategy: string): string =>
+  crawlStrategyLabelMap[crawlStrategy as keyof typeof crawlStrategyLabelMap] ?? crawlStrategy;
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
@@ -28,6 +36,11 @@ export default function SettingsPage() {
                   <p className="font-medium">{source.name}</p>
                   <p className="mt-1 text-xs text-muted-foreground">类型：{sourceTypeLabelMap[source.source_type]}</p>
                   <p className="text-xs text-muted-foreground">状态：{sourceStatusLabelMap[source.status]}</p>
+                  <p className="text-xs text-muted-foreground">
+                    启用：{source.enabled ? sourceEnabledLabelMap.enabled : sourceEnabledLabelMap.disabled}
+                  </p>
+                  <p className="text-xs text-muted-foreground">抓取策略：{getCrawlStrategyLabel(source.crawl_strategy)}</p>
+                  <p className="text-xs text-muted-foreground">最近抓取：{formatDateTime(source.last_crawled_at)}</p>
                   <p className="text-xs text-muted-foreground">地址：{source.url}</p>
                 </div>
               ))}

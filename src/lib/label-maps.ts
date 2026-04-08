@@ -31,6 +31,17 @@ export const sourceStatusLabelMap: Record<"active" | "paused" | "error", string>
   error: "异常"
 };
 
+export const sourceEnabledLabelMap: Record<"enabled" | "disabled", string> = {
+  enabled: "已启用",
+  disabled: "未启用"
+};
+
+export const crawlStrategyLabelMap: Record<"rss" | "html" | "api", string> = {
+  rss: "RSS 订阅",
+  html: "页面解析",
+  api: "API 拉取"
+};
+
 export const topicTypeLabelMap: Record<TopicType, string> = {
   text_model: "文本模型",
   multimodal: "多模态",
