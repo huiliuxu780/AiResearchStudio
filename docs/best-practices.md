@@ -14,6 +14,7 @@
 
 ## 发布前硬门禁
 - 必须全部通过：
+  - `npm run check:query-scope`（页面级 query 参数防偏离门禁）
   - `npm run type-check`
   - `npm run lint`
   - `npm run build`
@@ -48,5 +49,7 @@
 ## 共享组件与参数规范
 - 共享组件 API：docs/shared-components-api.md
 - 页面 Query 参数规范：docs/page-query-params-spec.md
+
+
 
 

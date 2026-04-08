@@ -27,6 +27,7 @@ npm run type-check
 npm run lint
 npm run build
 npm run demo:check
+npm run check:query-scope
 ```
 
 ## Manual Demo Route Set
@@ -58,5 +59,7 @@ Examples:
 ## Reference Docs
 - Shared Components API: docs/shared-components-api.md
 - Page Query Params Spec: docs/page-query-params-spec.md
+
+
 
 
