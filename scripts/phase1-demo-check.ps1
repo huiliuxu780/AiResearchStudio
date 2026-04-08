@@ -24,6 +24,16 @@ $semanticChecks = @(
     label = "timeline invalid topic fallback"
   },
   @{
+    route = "/timeline?source=github"
+    expected = "上下文：全部来源 / 全部主题"
+    label = "timeline unsupported source query ignored"
+  },
+  @{
+    route = "/timeline?topic=workflow&item_id=invalid_id"
+    expected = "上下文：Workflow"
+    label = "timeline invalid item id keeps topic context"
+  },
+  @{
     route = "/insights?id=invalid_id"
     expected = "ins_401"
     label = "insights invalid id fallback"
@@ -89,4 +99,3 @@ if ($failed.Count -gt 0) {
 
 Write-Output "`nAll demo routes and semantic checks responded successfully."
 exit 0
-

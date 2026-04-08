@@ -5,7 +5,7 @@
 ## 1. 统一原则
 - URL 参数名一律小写，优先 `snake_case`。
 - `state` 为全局调试参数，可用于所有顶层页面。
-- 语义化参数仅在对应页面生效，其他页面忽略。
+- 语义化参数仅在对应页面生效，其他页面忽略。`source` 不属于 Phase 1 URL 参数规范。
 - 解析入口统一使用：`getScenarioState(searchParams)`（见 `src/lib/scenario-state.ts`）。
 
 ## 2. 参数定义
@@ -50,6 +50,10 @@
 - `/reports`：`state`、`id`
 - `/settings`：`state`
 
+
+## 3.1 明确不纳入 URL 的参数（Phase 1）
+- `source`：当前仅作为 Timeline 页面内筛选状态，不回写 URL。
+- 原因：保持 Phase 1 参数面最小化，仅保留 `topic / item_id / id / state`。
 ## 4. 推荐 URL 示例
 - `/timeline?topic=workflow&item_id=norm_202`
 - `/insights?id=ins_401`
@@ -76,3 +80,4 @@
 - `layer?: string`（预留，Phase 1 未启用）
 
 参考：`src/repositories/workbench/types.ts`
+
