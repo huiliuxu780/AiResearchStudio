@@ -47,13 +47,17 @@ npm run demo:check
 - `-MaxAttempts` (default: `3`)
 - `-RetryDelaySec` (default: `2`)
 - `-DisableKeepAlive` (default: `true`)
+- `-WarmupTimeoutSec` (default: `15`)
+- `-WarmupMaxAttempts` (default: `2`)
+- `-AbortOnWarmupFailure` (default: `true`)
+- `-StopOnFirstFailure` (default: `true`)
 
 Example:
 ```powershell
-npm run demo:check -- -TimeoutSec 20 -MaxAttempts 2 -RetryDelaySec 1
+npm run demo:check -- -TimeoutSec 20 -MaxAttempts 2 -RetryDelaySec 1 -StopOnFirstFailure:$false
 ```
 
-The script also prints a summary line:
+The script also prints a summary line (including early-exit runs):
 - `routeOk` / `journeyOk` / `semanticOk`
 - `retriedSuccess`
 ## Demo Check Coverage
