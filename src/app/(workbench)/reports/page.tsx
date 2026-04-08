@@ -9,18 +9,16 @@ import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { SectionCard } from "@/components/shared/section-card";
 import { SelectableCardLink } from "@/components/shared/selectable-card-link";
 import { Button } from "@/components/ui/button";
-import { getScenarioState } from "@/lib/scenario-state";
+import { getDetailQuery } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function ReportsPage() {
   const searchParams = useSearchParams();
+  const query = getDetailQuery(searchParams);
   const repository = getWorkbenchRepository();
-  const reports = repository.getReports({
-    state: getScenarioState(searchParams),
-    id: searchParams.get("id") ?? undefined
-  });
+  const reports = repository.getReports(query);
   const state = reports.scenario;
-  const selectedId = searchParams.get("id") ?? reports.data.selected_report_id;
+  const selectedId = query.id ?? reports.data.selected_report_id;
 
   const selectedReport = reports.data.reports.find((item) => item.id === selectedId) ?? reports.data.reports[0];
 
@@ -62,3 +60,4 @@ export default function ReportsPage() {
     </ScenarioStateGate>
   );
 }
+

@@ -10,13 +10,14 @@ import { SectionCard } from "@/components/shared/section-card";
 import { StatCard } from "@/components/shared/stat-card";
 import { capabilityLayerDisplayOrder } from "@/lib/constants";
 import { capabilityLayerLabelMap } from "@/lib/label-maps";
-import { getScenarioState } from "@/lib/scenario-state";
+import { getStateQuery } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
+  const query = getStateQuery(searchParams);
   const repository = getWorkbenchRepository();
-  const dashboard = repository.getDashboard({ state: getScenarioState(searchParams) });
+  const dashboard = repository.getDashboard(query);
   const state = dashboard.scenario;
 
   return (
@@ -94,3 +95,4 @@ export default function DashboardPage() {
     </ScenarioStateGate>
   );
 }
+

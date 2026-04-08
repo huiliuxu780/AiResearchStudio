@@ -9,18 +9,16 @@ import { InsightCard } from "@/components/shared/insight-card";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { SectionCard } from "@/components/shared/section-card";
 import { SelectableCardLink } from "@/components/shared/selectable-card-link";
-import { getScenarioState } from "@/lib/scenario-state";
+import { getDetailQuery } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function InsightsPage() {
   const searchParams = useSearchParams();
+  const query = getDetailQuery(searchParams);
   const repository = getWorkbenchRepository();
-  const insights = repository.getInsights({
-    state: getScenarioState(searchParams),
-    id: searchParams.get("id") ?? undefined
-  });
+  const insights = repository.getInsights(query);
   const state = insights.scenario;
-  const selectedId = searchParams.get("id") ?? insights.data.insights[0]?.id;
+  const selectedId = query.id ?? insights.data.insights[0]?.id;
 
   const selectedInsight = insights.data.insights.find((item) => item.id === selectedId) ?? insights.data.insights[0];
 
@@ -50,3 +48,4 @@ export default function InsightsPage() {
     </ScenarioStateGate>
   );
 }
+

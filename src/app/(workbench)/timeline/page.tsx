@@ -10,19 +10,16 @@ import { FilterBar } from "@/components/shared/filter-bar";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { TimelineItemCard } from "@/components/shared/timeline-item-card";
 import { topicTypeLabelMap } from "@/lib/label-maps";
-import { getScenarioState } from "@/lib/scenario-state";
+import { getTimelineQuery } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function TimelinePage() {
   const searchParams = useSearchParams();
-  const topic = searchParams.get("topic");
-  const itemId = searchParams.get("item_id");
+  const query = getTimelineQuery(searchParams);
+  const topic = query.topic;
+  const itemId = query.item_id;
   const repository = getWorkbenchRepository();
-  const timeline = repository.getTimeline({
-    state: getScenarioState(searchParams),
-    topic: topic ?? undefined,
-    item_id: itemId ?? undefined
-  });
+  const timeline = repository.getTimeline(query);
   const state = timeline.scenario;
 
   const filteredItems = useMemo(() => {
@@ -59,3 +56,4 @@ export default function TimelinePage() {
     </ScenarioStateGate>
   );
 }
+

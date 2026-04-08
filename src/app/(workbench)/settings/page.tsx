@@ -5,14 +5,15 @@ import { useSearchParams } from "next/navigation";
 import { PageShell } from "@/components/layout/page-shell";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { SectionCard } from "@/components/shared/section-card";
-import { getScenarioState } from "@/lib/scenario-state";
+import { getStateQuery } from "@/lib/workbench-query";
 import { sourceTypeLabelMap } from "@/lib/label-maps";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
+  const query = getStateQuery(searchParams);
   const repository = getWorkbenchRepository();
-  const settings = repository.getSettings({ state: getScenarioState(searchParams) });
+  const settings = repository.getSettings(query);
   const state = settings.scenario;
 
   return (
@@ -56,3 +57,4 @@ export default function SettingsPage() {
     </ScenarioStateGate>
   );
 }
+

@@ -6,13 +6,14 @@ import { PageShell } from "@/components/layout/page-shell";
 import { CapabilityLayerCard } from "@/components/shared/capability-layer-card";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { capabilityLayerDisplayOrder } from "@/lib/constants";
-import { getScenarioState } from "@/lib/scenario-state";
+import { getStateQuery } from "@/lib/workbench-query";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function CapabilityMapPage() {
   const searchParams = useSearchParams();
+  const query = getStateQuery(searchParams);
   const repository = getWorkbenchRepository();
-  const capabilityMap = repository.getCapabilityMap({ state: getScenarioState(searchParams) });
+  const capabilityMap = repository.getCapabilityMap(query);
   const state = capabilityMap.scenario;
 
   const sortedLayers = capabilityLayerDisplayOrder
@@ -31,3 +32,4 @@ export default function CapabilityMapPage() {
     </ScenarioStateGate>
   );
 }
+
