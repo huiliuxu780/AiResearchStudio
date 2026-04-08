@@ -1,10 +1,10 @@
-﻿import type { CapabilityLayerSummary } from "@/mock/capability.mock";
+import type { CapabilityLayerSummary } from "@/mock/capability.mock";
 import type { DashboardMock } from "@/mock/dashboard.mock";
 import type { InsightMock } from "@/mock/insights.mock";
 import type { ReportMock } from "@/mock/reports.mock";
 import type { SettingsMock } from "@/mock/settings.mock";
 import type { TimelineMock } from "@/mock/timeline.mock";
-import type { ScenarioState, TopicType } from "@/types/enums";
+import type { CapabilityLayer, ScenarioState, TopicType } from "@/types/enums";
 import type { UiState } from "@/types/view-models";
 
 export interface WorkbenchQuery {
@@ -12,7 +12,7 @@ export interface WorkbenchQuery {
   topic?: TopicType;
   item_id?: string;
   id?: string;
-  layer?: string;
+  layer?: CapabilityLayer;
 }
 
 export type DashboardState = UiState<DashboardMock>;

@@ -2,14 +2,16 @@ import type { ReadonlyURLSearchParams } from "next/navigation";
 
 import { getScenarioState } from "@/lib/scenario-state";
 import type { WorkbenchQuery } from "@/repositories/workbench/types";
-import { topicTypeValues } from "@/types/enums";
-import type { TopicType } from "@/types/enums";
+import { capabilityLayerValues, topicTypeValues } from "@/types/enums";
+import type { CapabilityLayer, TopicType } from "@/types/enums";
 
 const topicTypeSet = new Set<string>(topicTypeValues);
+const capabilityLayerSet = new Set<string>(capabilityLayerValues);
 
 type StateQuery = Pick<WorkbenchQuery, "state">;
 type TimelineQuery = StateQuery & { topic?: TopicType; item_id?: string };
 type DetailQuery = StateQuery & { id?: string };
+type CapabilityMapQuery = StateQuery & { layer?: CapabilityLayer };
 
 function getValue(searchParams: ReadonlyURLSearchParams, key: string): string | undefined {
   const raw = searchParams.get(key);
@@ -26,6 +28,13 @@ function getTopicValue(searchParams: ReadonlyURLSearchParams): TopicType | undef
   return topicTypeSet.has(value) ? (value as TopicType) : undefined;
 }
 
+function getLayerValue(searchParams: ReadonlyURLSearchParams): CapabilityLayer | undefined {
+  const value = getValue(searchParams, "layer");
+  if (!value) return undefined;
+
+  return capabilityLayerSet.has(value) ? (value as CapabilityLayer) : undefined;
+}
+
 export function resolveSelectedId<T extends { id: string }>(items: T[], requestedId?: string, preferredId?: string): string | undefined {
   if (requestedId && items.some((item) => item.id === requestedId)) return requestedId;
   if (preferredId && items.some((item) => item.id === preferredId)) return preferredId;
@@ -36,6 +45,13 @@ export function resolveSelectedId<T extends { id: string }>(items: T[], requeste
 export function getStateQuery(searchParams: ReadonlyURLSearchParams): StateQuery {
   return {
     state: getScenarioState(searchParams)
+  };
+}
+
+export function getCapabilityMapQuery(searchParams: ReadonlyURLSearchParams): CapabilityMapQuery {
+  return {
+    ...getStateQuery(searchParams),
+    layer: getLayerValue(searchParams)
   };
 }
 
