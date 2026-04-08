@@ -45,6 +45,17 @@ export default function TimelinePage() {
     [pathname, router, searchParams]
   );
 
+  const handleResetFilters = useCallback(() => {
+    setSource(undefined);
+
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete("topic");
+    next.delete("item_id");
+
+    const queryString = next.toString();
+    router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams, setSource]);
+
   const filteredItems = useMemo(() => {
     const bySource = source ? timeline.data.items.filter((item) => item.source_type === source) : timeline.data.items;
     const byTopic = topic ? bySource.filter((item) => item.topic_type === topic) : bySource;
@@ -77,6 +88,7 @@ export default function TimelinePage() {
           selectedTopic={topic}
           onSourceChange={setSource}
           onTopicChange={handleTopicChange}
+          onReset={handleResetFilters}
         />
 
         <div className="space-y-3">
@@ -90,3 +102,4 @@ export default function TimelinePage() {
     </ScenarioStateGate>
   );
 }
+

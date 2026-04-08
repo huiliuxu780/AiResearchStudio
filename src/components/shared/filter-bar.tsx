@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { sourceTypeLabelMap, topicTypeLabelMap } from "@/lib/label-maps";
 import type { SourceType, TopicType } from "@/types/enums";
@@ -11,6 +12,7 @@ interface FilterBarProps {
   selectedTopic?: TopicType;
   onSourceChange?: (source?: SourceType) => void;
   onTopicChange?: (topic?: TopicType) => void;
+  onReset?: () => void;
 }
 
 export function FilterBar({
@@ -19,13 +21,15 @@ export function FilterBar({
   selectedSource,
   selectedTopic,
   onSourceChange,
-  onTopicChange
+  onTopicChange,
+  onReset
 }: FilterBarProps) {
   const sourceValue = selectedSource ?? "all";
   const topicValue = selectedTopic ?? "all";
+  const hasActiveFilter = Boolean(selectedSource || selectedTopic);
 
   return (
-    <div className="grid gap-2 rounded-lg border border-border/60 bg-card/40 p-3 md:grid-cols-2">
+    <div className="grid gap-2 rounded-lg border border-border/60 bg-card/40 p-3 md:grid-cols-[1fr_1fr_auto]">
       <Select
         value={sourceValue}
         onValueChange={(value) => {
@@ -65,6 +69,16 @@ export function FilterBar({
           ))}
         </SelectContent>
       </Select>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="md:self-stretch"
+        disabled={!hasActiveFilter}
+        onClick={() => onReset?.()}
+      >
+        重置筛选
+      </Button>
     </div>
   );
 }
