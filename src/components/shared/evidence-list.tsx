@@ -1,4 +1,4 @@
-import type { NormalizedItem } from "@/types/contracts";
+﻿import type { NormalizedItem } from "@/types/contracts";
 
 import { TimelineItemCard } from "@/components/shared/timeline-item-card";
 
@@ -19,4 +19,3 @@ export function EvidenceList({ title = "关联证据", items }: EvidenceListProp
     </section>
   );
 }
-

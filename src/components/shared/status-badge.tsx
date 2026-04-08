@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+﻿import { Badge } from "@/components/ui/badge";
 import { importanceLevelLabelMap, insightStatusLabelMap } from "@/lib/label-maps";
 import type { ImportanceLevel, InsightStatus } from "@/types/enums";
 
@@ -20,4 +20,3 @@ export function StatusBadge({ importanceLevel, insightStatus }: StatusBadgeProps
 
   return <Badge variant="outline">未知</Badge>;
 }
-

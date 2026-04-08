@@ -1,4 +1,4 @@
-import type { Insight, NormalizedItem } from "@/types/contracts";
+﻿import type { Insight, NormalizedItem } from "@/types/contracts";
 import type { UiState } from "@/types/view-models";
 
 export interface InsightMock {
@@ -12,7 +12,7 @@ export const insightsMock: UiState<InsightMock> = {
     insights: [
       {
         id: "ins_401",
-        title: "平台层 API 逐步强化标准化输出能力",
+        title: "平台层 API 正在强化标准化输出能力",
         content: "建议优先验证 schema 约束下的链路兼容性。",
         insight_type: "action_suggestion",
         capability_layer: "platform",
@@ -24,7 +24,7 @@ export const insightsMock: UiState<InsightMock> = {
       },
       {
         id: "ins_402",
-        title: "MCP 生态文档持续完善但接入细节仍需人工验证",
+        title: "MCP 生态文档持续完善，但接入细节仍需人工验证",
         content: "建议在安全边界和权限策略上补充内部规范。",
         insight_type: "risk_alert",
         capability_layer: "enhancement",
@@ -57,8 +57,8 @@ export const insightsMock: UiState<InsightMock> = {
         {
           id: "norm_201",
           raw_item_id: "raw_201",
-          title: "MCP 插件接入文档补充鉴权段落",
-          summary: "增强了插件集成的安全接入说明。",
+          title: "MCP 插件接入文档补充鉴权章节",
+          summary: "增强插件集成的安全接入说明，减少接入误配风险。",
           source_name: "通义千问官方文档",
           source_type: "docs",
           item_type: "documentation",

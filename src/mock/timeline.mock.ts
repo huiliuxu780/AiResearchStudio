@@ -1,4 +1,4 @@
-import type { NormalizedItem } from "@/types/contracts";
+﻿import type { NormalizedItem } from "@/types/contracts";
 import type { UiState } from "@/types/view-models";
 
 export interface TimelineMock {
@@ -24,8 +24,8 @@ export const timelineMock: UiState<TimelineMock> = {
       {
         id: "norm_201",
         raw_item_id: "raw_201",
-        title: "MCP 插件接入文档补充鉴权段落",
-        summary: "增强了插件集成的安全接入说明。",
+        title: "MCP 插件接入文档补充鉴权章节",
+        summary: "增强插件集成的安全接入说明，减少接入误配风险。",
         source_name: "通义千问官方文档",
         source_type: "docs",
         item_type: "documentation",
