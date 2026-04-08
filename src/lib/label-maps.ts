@@ -25,6 +25,12 @@ export const sourceTypeLabelMap: Record<SourceType, string> = {
   manual: "手动录入"
 };
 
+export const sourceStatusLabelMap: Record<"active" | "paused" | "error", string> = {
+  active: "运行中",
+  paused: "已暂停",
+  error: "异常"
+};
+
 export const topicTypeLabelMap: Record<TopicType, string> = {
   text_model: "文本模型",
   multimodal: "多模态",

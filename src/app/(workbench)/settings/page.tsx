@@ -5,8 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { PageShell } from "@/components/layout/page-shell";
 import { ScenarioStateGate } from "@/components/shared/scenario-state-gate";
 import { SectionCard } from "@/components/shared/section-card";
+import { formatDateTime } from "@/lib/formatters";
+import { sourceStatusLabelMap, sourceTypeLabelMap } from "@/lib/label-maps";
 import { getStateQuery } from "@/lib/workbench-query";
-import { sourceTypeLabelMap } from "@/lib/label-maps";
 import { getWorkbenchRepository } from "@/repositories";
 
 export default function SettingsPage() {
@@ -26,6 +27,7 @@ export default function SettingsPage() {
                 <div key={source.id} className="rounded-md border border-border/60 bg-background/50 p-3">
                   <p className="font-medium">{source.name}</p>
                   <p className="mt-1 text-xs text-muted-foreground">类型：{sourceTypeLabelMap[source.source_type]}</p>
+                  <p className="text-xs text-muted-foreground">状态：{sourceStatusLabelMap[source.status]}</p>
                   <p className="text-xs text-muted-foreground">地址：{source.url}</p>
                 </div>
               ))}
@@ -48,7 +50,7 @@ export default function SettingsPage() {
               <div key={job.job_name} className="rounded-md border border-border/60 bg-background/50 p-3">
                 <p className="font-medium">{job.job_name}</p>
                 <p className="text-xs text-muted-foreground">状态：{job.status}</p>
-                <p className="text-xs text-muted-foreground">最近运行：{job.last_run_at}</p>
+                <p className="text-xs text-muted-foreground">最近运行：{formatDateTime(job.last_run_at)}</p>
               </div>
             ))}
           </div>
@@ -57,4 +59,3 @@ export default function SettingsPage() {
     </ScenarioStateGate>
   );
 }
-
