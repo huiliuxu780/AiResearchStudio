@@ -9,7 +9,7 @@ import type { UiState } from "@/types/view-models";
 
 export interface WorkbenchQuery {
   state?: ScenarioState;
-  topic?: TopicType | string;
+  topic?: TopicType;
   item_id?: string;
   id?: string;
   layer?: string;
@@ -21,3 +21,4 @@ export type TimelineState = UiState<TimelineMock>;
 export type InsightsState = UiState<InsightMock>;
 export type ReportsState = UiState<ReportMock>;
 export type SettingsState = UiState<SettingsMock>;
+

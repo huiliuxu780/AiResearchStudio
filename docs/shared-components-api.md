@@ -1,6 +1,6 @@
 ﻿# 共享组件 API 文档（Phase 1）
 
-本文用于统一 `src/components/shared` 与 `src/components/layout` 的组件使用方式，减少页面重复实现。
+本文用于统一 `src/components/shared` 与 `src/components/layout` 的组件使用方式，减少页面重复实现与参数漂移。
 
 ## 1. 布局容器
 
@@ -8,14 +8,14 @@
 - 文件：`src/components/layout/page-shell.tsx`
 - 作用：页面主标题、描述、右侧操作区与主体内容容器。
 - Props：
-  - `title: string` 页面标题
-  - `description: string` 页面描述
-  - `actions?: ReactNode` 顶部右侧操作区
-  - `children: ReactNode` 页面内容
+  - `title: string` 页面标题。
+  - `description: string` 页面描述。
+  - `actions?: ReactNode` 顶部右侧操作区。
+  - `children: ReactNode` 页面内容。
 
 ### `SectionCard`
 - 文件：`src/components/shared/section-card.tsx`
-- 作用：通用分区卡片容器，支持标题、副标题和右侧 actions。
+- 作用：通用分区卡片容器，支持标题、副标题、右侧 actions、额外样式扩展。
 - Props：
   - `title: string`
   - `description?: string`
@@ -44,19 +44,23 @@
 
 ### `EmptyState`
 - 文件：`src/components/shared/empty-state.tsx`
+- 作用：空态反馈，支持可选“重置筛选”动作。
 - Props：
-  - `title?: string`（默认：暂无可展示内容）
+  - `title?: string`（默认：`暂无可展示内容`）
   - `description?: string`
+  - `resetLabel?: string`（默认：`重置筛选`）
+  - `onReset?: () => void`（传入时展示按钮）
 
 ### `ErrorState`
 - 文件：`src/components/shared/error-state.tsx`
 - Props：
-  - `title?: string`（默认：加载失败）
+  - `title?: string`（默认：`加载失败`）
   - `description?: string`
+- 说明：当前“重试”按钮为视觉占位，不包含内置重试逻辑。
 
 ### `SkeletonBlock`
 - 文件：`src/components/shared/skeleton-block.tsx`
-- Props：无
+- Props：无。
 - 作用：列表/卡片页 loading 占位骨架屏。
 
 ## 3. 导航与选中态
@@ -95,8 +99,8 @@
   - `importanceLevel?: ImportanceLevel`
   - `insightStatus?: InsightStatus`
 - 规则：
-  - 两者都传时优先 `importanceLevel`
-  - 都不传时回退为 outline badge
+  - 两者都传时优先 `importanceLevel`。
+  - 都不传时回退为 `未知`。
 
 ### `TimelineItemCard`
 - 文件：`src/components/shared/timeline-item-card.tsx`
@@ -129,11 +133,17 @@
 - Props：
   - `sourceTypes: SourceType[]`
   - `topicTypes: TopicType[]`
-- 说明：当前支持来源与主题筛选联动，其中主题会回写 URL；来源筛选目前仅在页面内生效（不回写 URL）。
+  - `selectedSource?: SourceType`
+  - `selectedTopic?: TopicType`
+  - `onSourceChange?: (source?: SourceType) => void`
+  - `onTopicChange?: (topic?: TopicType) => void`
+  - `onReset?: () => void`
+- 说明：
+  - `onSourceChange` / `onTopicChange` 未传时，下拉仅展示不回写。
+  - `onReset` 未传时，点击重置按钮无副作用。
 
 ## 5. 组合建议
 - 页面必须先走 `ScenarioStateGate`，再渲染 `PageShell`。
 - 需要“列表 + 右侧详情”时，左侧列表项统一使用 `SelectableCardLink`。
 - 需要“返回仪表盘 + 当前上下文”时统一使用 `ContextBackBar`。
-- 新页面优先复用上述组件；避免新增同类展示壳组件。
-
+- 新页面优先复用上述组件，避免新增同类展示壳组件。
