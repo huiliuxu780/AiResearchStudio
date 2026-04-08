@@ -44,3 +44,9 @@
   - 未完成事项
   - 待验证项
   - 下一步第一动作
+
+## 共享组件与参数规范
+- 共享组件 API：docs/shared-components-api.md
+- 页面 Query 参数规范：docs/page-query-params-spec.md
+
+

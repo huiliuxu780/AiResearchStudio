@@ -54,3 +54,9 @@ Examples:
 - Workflow: `docs/roles/collaboration-flow.md`
 
 
+
+## Reference Docs
+- Shared Components API: docs/shared-components-api.md
+- Page Query Params Spec: docs/page-query-params-spec.md
+
+
