@@ -14,6 +14,10 @@
   1. <risk_1>
 - 下一步第一动作：`<next_first_action>`
 
+会话要求（先执行）：
+- 先拉起 Supervisor Agent `Mill`，输出监督基线（风险、禁止事项、建议顺序）。
+- 每次提交前让 `Mill` 给出放行结论（scope/stability）。
+
 约束：
 - 端口固定 `4000`
 - 前端优先 `shadcn/ui`
