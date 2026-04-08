@@ -40,6 +40,22 @@ npm run demo:check
 - `check:query-links`
 - `check:query-route-helpers`
 
+## Demo Check CLI Options
+`npm run demo:check` supports optional PowerShell args:
+- `-BaseUrl` (default: `http://localhost:4000`)
+- `-TimeoutSec` (default: `30`)
+- `-MaxAttempts` (default: `3`)
+- `-RetryDelaySec` (default: `2`)
+- `-DisableKeepAlive` (default: `true`)
+
+Example:
+```powershell
+npm run demo:check -- -TimeoutSec 20 -MaxAttempts 2 -RetryDelaySec 1
+```
+
+The script also prints a summary line:
+- `routeOk` / `journeyOk` / `semanticOk`
+- `retriedSuccess`
 ## Demo Check Coverage
 `npm run demo:check` now covers:
 - Route status checks
