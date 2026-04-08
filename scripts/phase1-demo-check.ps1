@@ -1,5 +1,9 @@
 param(
-  [string]$BaseUrl = "http://localhost:4000"
+  [string]$BaseUrl = "http://localhost:4000",
+  [int]$TimeoutSec = 30,
+  [int]$MaxAttempts = 3,
+  [int]$RetryDelaySec = 2,
+  [bool]$DisableKeepAlive = $true
 )
 
 $routes = @(
@@ -48,12 +52,12 @@ $journeyChecks = @(
 $semanticChecks = @(
   @{
     route = "/capability-map?layer=platform"
-    expected = "data-focused-layer-first=\"platform\""
+    expected = 'data-focused-layer-first="platform"'
     label = "capability map layer focus ordering"
   },
   @{
     route = "/capability-map?layer=invalid_layer"
-    expected = "data-focus-layer=\"all\""
+    expected = 'data-focus-layer="all"'
     label = "capability map invalid layer fallback"
   },
   @{
@@ -86,16 +90,31 @@ $semanticChecks = @(
 function Invoke-WithRetry {
   param(
     [string]$Url,
-    [int]$TimeoutSec = 30,
-    [int]$MaxAttempts = 3,
-    [int]$RetryDelaySec = 2
+    [int]$RequestTimeoutSec,
+    [int]$RequestMaxAttempts,
+    [int]$RequestRetryDelaySec,
+    [bool]$RequestDisableKeepAlive
   )
 
   $lastError = "unknown"
 
-  for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+  for ($attempt = 1; $attempt -le $RequestMaxAttempts; $attempt++) {
     try {
-      $response = Invoke-WebRequest -Uri $Url -Method GET -UseBasicParsing -TimeoutSec $TimeoutSec
+      $invokeParams = @{
+        Uri = $Url
+        Method = "GET"
+        UseBasicParsing = $true
+        TimeoutSec = $RequestTimeoutSec
+        Headers = @{
+          "Cache-Control" = "no-cache"
+        }
+      }
+
+      if ($RequestDisableKeepAlive) {
+        $invokeParams.DisableKeepAlive = $true
+      }
+
+      $response = Invoke-WebRequest @invokeParams
       return @{
         ok = $true
         response = $response
@@ -103,8 +122,8 @@ function Invoke-WithRetry {
       }
     } catch {
       $lastError = $_.Exception.Message
-      if ($attempt -lt $MaxAttempts) {
-        Start-Sleep -Seconds $RetryDelaySec
+      if ($attempt -lt $RequestMaxAttempts) {
+        Start-Sleep -Seconds $RequestRetryDelaySec
       }
     }
   }
@@ -112,24 +131,31 @@ function Invoke-WithRetry {
   return @{
     ok = $false
     error = $lastError
-    attempts = $MaxAttempts
+    attempts = $RequestMaxAttempts
   }
 }
 
 Write-Output "Phase 1 demo route check"
 Write-Output "Base URL: $BaseUrl"
+Write-Output "Request options: timeout=${TimeoutSec}s, maxAttempts=$MaxAttempts, retryDelay=${RetryDelaySec}s, disableKeepAlive=$DisableKeepAlive"
 
 $failed = @()
+$stats = @{
+  routeOk = 0
+  journeyOk = 0
+  semanticOk = 0
+  retriedSuccess = 0
+}
 
 # Warm up dev server once to avoid first-request cold start flakiness.
-$warmup = Invoke-WithRetry -Url "$BaseUrl/" -TimeoutSec 60 -MaxAttempts 2 -RetryDelaySec 2
+$warmup = Invoke-WithRetry -Url "$BaseUrl/" -RequestTimeoutSec 60 -RequestMaxAttempts 2 -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 if (-not $warmup.ok) {
   Write-Output "[WARN] warmup failed: $($warmup.error)"
 }
 
 foreach ($route in $routes) {
   $url = "$BaseUrl$route"
-  $result = Invoke-WithRetry -Url $url -TimeoutSec 30 -MaxAttempts 3 -RetryDelaySec 2
+  $result = Invoke-WithRetry -Url $url -RequestTimeoutSec $TimeoutSec -RequestMaxAttempts $MaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 
   if (-not $result.ok) {
     Write-Output "[FAIL] $url ($($result.error))"
@@ -139,7 +165,9 @@ foreach ($route in $routes) {
 
   $res = $result.response
   if ($res.StatusCode -ge 200 -and $res.StatusCode -lt 400) {
+    $stats.routeOk += 1
     if ($result.attempts -gt 1) {
+      $stats.retriedSuccess += 1
       Write-Output "[OK] $url ($($res.StatusCode), retry=$($result.attempts))"
     } else {
       Write-Output "[OK] $url ($($res.StatusCode))"
@@ -155,7 +183,7 @@ Write-Output "Journey checks"
 
 foreach ($check in $journeyChecks) {
   $url = "$BaseUrl$($check.route)"
-  $result = Invoke-WithRetry -Url $url -TimeoutSec 30 -MaxAttempts 3 -RetryDelaySec 2
+  $result = Invoke-WithRetry -Url $url -RequestTimeoutSec $TimeoutSec -RequestMaxAttempts $MaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 
   if (-not $result.ok) {
     Write-Output "[FAIL] $($check.label) ($($result.error))"
@@ -171,7 +199,9 @@ foreach ($check in $journeyChecks) {
   }
 
   if ($res.Content -match [regex]::Escape($check.expected)) {
+    $stats.journeyOk += 1
     if ($result.attempts -gt 1) {
+      $stats.retriedSuccess += 1
       Write-Output "[OK] $($check.label) (retry=$($result.attempts))"
     } else {
       Write-Output "[OK] $($check.label)"
@@ -187,7 +217,7 @@ Write-Output "Semantic fallback checks"
 
 foreach ($check in $semanticChecks) {
   $url = "$BaseUrl$($check.route)"
-  $result = Invoke-WithRetry -Url $url -TimeoutSec 30 -MaxAttempts 3 -RetryDelaySec 2
+  $result = Invoke-WithRetry -Url $url -RequestTimeoutSec $TimeoutSec -RequestMaxAttempts $MaxAttempts -RequestRetryDelaySec $RetryDelaySec -RequestDisableKeepAlive $DisableKeepAlive
 
   if (-not $result.ok) {
     Write-Output "[FAIL] $($check.label) ($($result.error))"
@@ -203,7 +233,9 @@ foreach ($check in $semanticChecks) {
   }
 
   if ($res.Content -match [regex]::Escape($check.expected)) {
+    $stats.semanticOk += 1
     if ($result.attempts -gt 1) {
+      $stats.retriedSuccess += 1
       Write-Output "[OK] $($check.label) (retry=$($result.attempts))"
     } else {
       Write-Output "[OK] $($check.label)"
@@ -213,6 +245,9 @@ foreach ($check in $semanticChecks) {
     $failed += $url
   }
 }
+
+Write-Output ""
+Write-Output "Summary: routeOk=$($stats.routeOk)/$($routes.Count), journeyOk=$($stats.journeyOk)/$($journeyChecks.Count), semanticOk=$($stats.semanticOk)/$($semanticChecks.Count), retriedSuccess=$($stats.retriedSuccess)"
 
 if ($failed.Count -gt 0) {
   Write-Output "`nFailed checks:"
