@@ -1,4 +1,4 @@
-﻿# Phase 1 Release Notes
+# Phase 1 Release Notes
 
 ## Release Summary
 Phase 1 delivers a static, type-safe Research Workbench UI with six top-level pages, shared components, mock data contracts, and full loading/empty/error display states.
@@ -17,6 +17,10 @@ Phase 1 delivers a static, type-safe Research Workbench UI with six top-level pa
 - Chinese label mapping for user-visible enum values
 - Context-aware page linking between Dashboard, Timeline, Insights, Reports
 - Settings static panel (no complex editor)
+- Query governance hardening:
+  - unified parsing helpers (`getStateQuery` / `getTimelineQuery` / `getDetailQuery`)
+  - unified query href helpers (`src/lib/workbench-routes.ts`)
+  - query-link lint gate (`check:query-links`)
 
 ## Explicitly Not Included
 - Real source crawling and scheduling
@@ -30,6 +34,7 @@ Phase 1 delivers a static, type-safe Research Workbench UI with six top-level pa
 3. Insight detail switch by `id` query
 4. Report detail switch by `id` query
 5. Per-page state simulation via `?state=loading|empty|error`
+6. Demo verification script includes route checks + journey checks + semantic fallback checks
 
 ## Known Environment Notes
 - Some local environments may have dependency encoding anomalies in `node_modules`.

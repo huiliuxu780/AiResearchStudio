@@ -1,4 +1,4 @@
-﻿# Phase 1 Demo Checklist
+# Phase 1 Demo Checklist
 
 ## Scope Lock
 - Keep this phase as static research workbench UI only.
@@ -26,6 +26,17 @@
 - Reports supports query-based selection (`id`) and detail panel update.
 - Loading/empty/error states are available on every top-level page via `?state=`.
 
+## Query Governance Checklist
+- Query parsing must use `getStateQuery` / `getTimelineQuery` / `getDetailQuery`.
+- Query-bearing href construction must use `src/lib/workbench-routes.ts` helpers.
+- `source` must stay out of URL in Phase 1.
+
+## Automated Gate Checklist
+- `npm run preflight` passes.
+- `npm run demo:check` passes route status checks.
+- `npm run demo:check` passes journey checks (`/ -> /timeline -> /insights -> /reports -> /settings`).
+- `npm run demo:check` passes semantic fallback checks.
+
 ## Mock Data Checklist
 - API-shaped fields use `snake_case`.
 - Enum values follow `docs/data-contract.md`.
@@ -41,4 +52,5 @@
 2. In Timeline, verify context bar and filtered sequence behavior.
 3. Open an Insight card and validate evidence list updates by selected `id`.
 4. Open Reports and switch report by URL query `id`.
-5. Append `?state=loading`, `?state=empty`, `?state=error` to each page URL.
+5. Open Settings and verify source card details are visible.
+6. Append `?state=loading`, `?state=empty`, `?state=error` to each page URL.
