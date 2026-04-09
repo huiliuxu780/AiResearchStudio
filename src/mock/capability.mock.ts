@@ -1,4 +1,4 @@
-import type { CapabilityCatalog } from "@/types/contracts";
+﻿import type { CapabilityCatalog } from "@/types/contracts";
 import type { UiState } from "@/types/view-models";
 
 export interface CapabilityLayerSummary {

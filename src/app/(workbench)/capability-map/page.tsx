@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useSearchParams } from "next/navigation";
 
@@ -38,7 +38,11 @@ export default function CapabilityMapPage() {
       <PageShell title="能力地图" description={description}>
         {query.layer ? <p className="text-xs text-muted-foreground">当前按能力层聚焦排序，聚焦层已高亮显示。</p> : null}
 
-        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3" data-focus-layer={query.layer ?? "all"} data-focused-layer-first={sortedLayers[0]?.capability_layer ?? "none"}>
+        <div
+          className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3"
+          data-focus-layer={query.layer ?? "all"}
+          data-focused-layer-first={sortedLayers[0]?.capability_layer ?? "none"}
+        >
           {sortedLayers.map((layer) => {
             const isFocused = query.layer === layer.capability_layer;
 

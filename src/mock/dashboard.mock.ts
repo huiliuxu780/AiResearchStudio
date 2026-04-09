@@ -1,4 +1,4 @@
-import type { Insight, NormalizedItem } from "@/types/contracts";
+﻿import type { Insight, NormalizedItem } from "@/types/contracts";
 import type { UiState } from "@/types/view-models";
 
 export interface DashboardMock {
@@ -73,8 +73,8 @@ export const dashboardMock: UiState<DashboardMock> = {
       }
     ],
     experiment_suggestions: [
-      "验证工作流并发节点在 3 类真实任务中的稳定性",
-      "对比结构化输出在链路监控中的可观测性收益"
+      "验证工作流并发节点在 3 类真实任务中的稳定性。",
+      "对比结构化输出在链路监控中的可观测性收益。"
     ]
   }
 };

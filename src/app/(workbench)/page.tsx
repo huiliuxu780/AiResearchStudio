@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -89,11 +89,10 @@ export default function DashboardPage() {
           </ul>
         </SectionCard>
 
-        <SectionCard title="状态演示" description="通过 URL 参数切换？state=loading|empty|error">
+        <SectionCard title="状态演示" description="通过 URL 参数切换，state=loading|empty|error">
           <p className="text-sm text-muted-foreground">当前状态：{state}。示例：/timeline?state=empty</p>
         </SectionCard>
       </PageShell>
     </ScenarioStateGate>
   );
 }
-

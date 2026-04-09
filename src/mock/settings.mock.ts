@@ -1,4 +1,4 @@
-import type { Source } from "@/types/contracts";
+﻿import type { Source } from "@/types/contracts";
 import type { UiState } from "@/types/view-models";
 
 export interface SettingsMock {
